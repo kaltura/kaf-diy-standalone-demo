@@ -1,0 +1,6 @@
+Flask==2.3.3
+python-dotenv==1.0.0
+requests==2.31.0
+pycryptodome==3.19.0
+KalturaApiClient==21.19.0
+lxml==6.0.0 

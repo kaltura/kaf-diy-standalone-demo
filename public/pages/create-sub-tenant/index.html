@@ -1,0 +1,63 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+  <link rel="stylesheet" type="text/css" href="../../app.css" media="screen" />
+  <style>
+    .input .field {
+      width: 100%;
+      padding-bottom: 20px;
+    }
+    .field input, .field textarea {
+      width: 100%;
+      padding: 8px;
+      border: 1px solid #ccc;
+      border-radius: 4px;
+    }
+    .field label {
+      display: block;
+      margin-bottom: 5px;
+      font-weight: bold;
+    }
+    .result {
+      margin-top: 20px;
+      padding: 15px;
+      border-radius: 4px;
+      white-space: pre-wrap;
+    }
+    .result.success {
+      background-color: #d4edda;
+      border: 1px solid #c3e6cb;
+      color: #155724;
+    }
+    .result.error {
+      background-color: #f8d7da;
+      border: 1px solid #f5c6cb;
+      color: #721c24;
+    }
+    .loading {
+      display: none;
+      text-align: center;
+      margin: 20px 0;
+    }
+    #createTenant {
+      width: fit-content; /* shrink button width to fit its text */
+      align-self: flex-start; /* prevent flex container from stretching it */
+    }
+  </style>
+  <script src="../../app.js"></script>
+  <script src="app.js"></script>
+</head>
+
+<body>
+  <div class="app">
+    <h1>Create Kaltura Sub-Tenant</h1>
+    <p>This page is for internal development only. The backend fetches all necessary credentials from environment variables, so no sensitive data is entered in the browser. This will create both a sub-tenant and a publishing category.</p>
+    <button id="createTenant" type="button">Create Sub-Tenant </button>
+    <pre id="result" class="result" style="display:none;"></pre>
+
+  </div>
+
+
+</body>
+</html> 

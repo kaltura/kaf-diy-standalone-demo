@@ -1,0 +1,28 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+  <link rel="stylesheet" type="text/css" href="app.css" media="screen" />
+</head>
+
+<body>
+  <script defer src="app.js"></script>
+  <div class="header">
+    <ul>
+      <li><a href="pages/entry-create-kaf/index.html" target="page-app" onclick="navigationClick(event)">Create Event KAF</a></li>
+      <li>|</li>
+      <li><a href="pages/create-sub-tenant/index.html" target="page-app" onclick="navigationClick(event)">Create Sub-Tenant</a></li>
+    </ul>
+  </div>
+  <div class="page">
+    <div class="xhrlogs">
+      <h3>XHR Response Info</h3>
+      <div class="table" id="xhrlog">
+      </div>
+    </div>
+    <div class="app">
+      <iframe name="page-app"></iframe>
+    </div>
+  </div>
+</body>
+</html>

@@ -1,0 +1,167 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Kaltura Entry Creator</title>
+    <link rel="stylesheet" type="text/css" href="app.css?v=1236" media="screen" />
+    <link rel="stylesheet" type="text/css" href="../../app.css" media="screen" />
+    <script type="module" src="app.js"></script>
+    <script src="../../app.js"></script>
+</head>
+<body>
+    <div class="container">
+        <!-- Left Column -->
+        <div class="left-column">
+            <!-- Combined Entry/Room Form -->
+            <div class="section">
+                <form id="combinedForm">
+                    <input type="text" id="entryName" name="entryName" placeholder="Name" required>
+                    <textarea id="entryDescription" placeholder="Description" required></textarea>
+                    <button type="submit" id="createButton">Create DIY</button>
+                </form>
+            </div>
+
+            <!-- Get Entry Details -->
+            <div class="section">
+                <form id="getSessionForm">
+                    <input type="text" id="sessionIdInput" name="sessionId" placeholder="Entry ID" required>
+                    <button type="submit">Get Entry Details</button>
+                </form>
+            </div>
+
+            <!-- Logs Section -->
+            <div class="section">
+                <div class="section-header">
+                    <h3>Logs</h3>
+                    <button id="clearLogsBtn" type="button">Clear</button>
+                </div>
+                <pre id="logOutput"></pre>
+            </div>
+        </div>
+
+        <!-- Middle Column for Video Player -->
+        <div class="middle-column">
+            <div class="section">
+                <h3>Video Player</h3>
+                <div class="video-container">
+                    <iframe id="videoPlayerIframe" 
+                            src="about:blank" 
+                            frameborder="0" 
+                            allowfullscreen
+                            title="Video Player"
+                            style="min-width: 1000px; width: 100%; height: 100%;">
+                    </iframe>
+                </div>
+            </div>
+        </div>
+
+        <!-- Right Column -->
+        <div class="right-column">
+            <!-- API Test Form -->
+            <div class="section compact-form">
+                                <!-- Mode Toggle -->
+                <div class="mode-toggle-container">
+                    <div class="mode-toggle">
+                        <input type="radio" id="studioMode" name="mode" value="studio" checked>
+                        <label for="studioMode">Studio</label>
+                        <input type="radio" id="playerMode" name="mode" value="player">
+                        <label for="playerMode">Player</label>
+                    </div>
+                </div>
+                
+                <form id="apiTestForm">
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label for="role">Role</label>
+                            <select id="role" name="role">
+                                <option value="viewerRole">Viewer Role</option>
+                                <option value="privateOnlyRole">Private Only Role</option>
+                                <option value="adminRole">Admin Role</option>
+                                <option value="unmoderatedAdminRole">Unmoderated Admin Role</option>
+                            </select>
+                        </div>
+                    </div>
+
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label for="userId">User ID *</label>
+                            <input type="text" id="userId" name="userId" required>
+                        </div>
+                        <div class="form-group">
+                            <label for="entryId">Entry ID *</label>
+                            <input type="text" id="entryId" name="entryId" required>
+                        </div>
+                    </div>
+
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label for="firstName">First Name</label>
+                            <input type="text" id="firstName" name="firstName">
+                        </div>
+                        <div class="form-group">
+                            <label for="lastName">Last Name</label>
+                            <input type="text" id="lastName" name="lastName">
+                        </div>
+                    </div>
+
+                    <div class="form-row" id="moderatorFields">
+                        <div class="form-group">
+                            <label for="chatModerator">Chat Moderator</label>
+                            <input type="text" id="chatModerator" name="chatModerator" placeholder="1/0">
+                        </div>
+                        <div class="form-group">
+                            <label for="roomModerator">Room Moderator</label>
+                            <input type="text" id="roomModerator" name="roomModerator" placeholder="1/0">
+                        </div>
+                    </div>
+
+                    <button type="button" id="apiTestSubmit">Generate Event</button>
+                </form>
+            </div>
+
+            <!-- LocalStorage Display Section -->
+            <div class="section compact-form">
+                <h3>DONT USE IN UI- Only for demo</h3>
+                <form id="localStorageForm">
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label for="localTenantId">PID</label>
+                            <input type="text" id="localTenantId" name="localTenantId" style="font-size: 11px;">
+                        </div>
+                        <div class="form-group">
+                            <label for="localTenantEmail">PID Email</label>
+                            <input type="text" id="localTenantEmail" name="localTenantEmail" style="font-size: 11px;">
+                        </div>
+                    </div>
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label for="localAdminSecret">PID Secret</label>
+                            <input type="text" id="localAdminSecret" name="localAdminSecret" style="font-size: 11px;">
+                        </div>
+                        <div class="form-group">
+                            <label for="localPublishingCategoryId">Category ID</label>
+                            <input type="text" id="localPublishingCategoryId" name="localPublishingCategoryId" style="font-size: 11px;">
+                        </div>
+                    </div>
+                    <div class="form-row">
+                        <button type="button" id="updateLocalStorage" style="font-size: 11px;">Update Storage</button>
+                        <button type="button" id="clearLocalStorage" style="font-size: 11px;">Clear All</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <!-- Modal -->
+    <div id="modalDialog" class="modal">
+        <div class="modal-content">
+            <h2 id="model-header">Sessions for Selected Event</h2>
+            <ul id="sessionList"></ul>
+            <button id="closeModal">Close</button>
+        </div>
+    </div>
+
+
+</body>
+</html>

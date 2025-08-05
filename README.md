@@ -1,0 +1,252 @@
+# KAF Standalone Demo - Developer Guide
+
+A comprehensive Python code sample demonstrating how to implement Kaltura's DIY (Do-It-Yourself) live session functionality. This developer guide provides working code examples for creating and managing Kaltura entries, rooms, and sub-tenants using the Kaltura Application Framework (KAF).
+
+## 🎯 Purpose
+
+This project serves as a **reference implementation** for developers who want to integrate Kaltura's DIY live streaming capabilities into their own platforms. It demonstrates:
+
+- **Live Stream Creation**: How to programmatically create Kwebcast live entries
+- **Room Management**: How to create and configure embedded rooms
+- **Session Generation**: How to generate secure Kaltura sessions for users
+- **Sub-tenant Provisioning**: How to set up new Kaltura partners with required modules
+- **API Integration Patterns**: Best practices for integrating with Kaltura's REST APIs
+
+## 🚀 Key Features for Developers
+
+### 🎥 DIY Live Session Implementation
+- **Live Entry Creation**: Complete code sample for creating Kwebcast live streams
+- **Metadata Management**: Automatic attachment of KwebcastProfile metadata
+- **DVR Configuration**: Programmatic setup of recording and playback options
+- **Category Publishing**: Integration with Kaltura for entitlments
+
+### 🏢 Sub-tenant Management
+- **Partner Provisioning**: Full code example for creating new Kaltura partners
+- **Module Configuration**: Pre-configured with essential KAF modules
+- **Category Hierarchy**: Automatic creation of publishing categories
+- **Template Support**: Reusable partner and room templates
+
+### 🎛️ API Integration Examples
+- **Service Layer Pattern**: Clean separation of concerns with dedicated models
+- **Error Handling**: Comprehensive error management and logging
+- **Session Management**: Secure token generation for embedded components
+- **Real-time Feedback**: Progress tracking and status updates
+
+## 📁 Project Structure
+
+```
+kaf-standalone-demo/
+├── lib/
+│   ├── server.py                 # Flask application with route serving
+│   ├── routes.py                 # API route definitions (7 endpoints)
+│   ├── models/
+│   │   ├── base_model.py         # Base model with shared functionality
+│   │   ├── live_event_model.py   # Live stream operations
+│   │   ├── room_model.py         # Room creation operations
+│   │   └── sub_tenant_model.py   # Sub-tenant and category management
+│   ├── services/
+│   │   └── kaltura_service.py    # Service layer for API operations
+│   └── kaltura_integration/
+│       └── simple_client.py      # Enhanced Kaltura client wrapper
+├── public/
+│   ├── index.html                # Main navigation interface
+│   ├── app.js                    # Shared utilities and navigation
+│   ├── app.css                   # Global styles
+│   ├── en.json                   # Localization data
+│   └── pages/
+│       ├── entry-create-kaf/     # Enhanced entry creation interface
+│       │   ├── index.html        # 3-column responsive layout
+│       │   ├── app.js            # Advanced form handling & player integration
+│       │   └── app.css           # Custom styling (500+ lines)
+│       └── create-sub-tenant/    # Sub-tenant creation interface
+│           ├── index.html        # Multi-step creation form
+│           └── app.js            # Automated tenant setup workflow
+├── requirements.txt              # Python dependencies
+├── run.py                        # Application entry point
+├── list_metadata_profiles.py     # Utility for metadata profile discovery
+└── README.md                     # This documentation
+```
+
+
+## 🛠️ Installation
+
+1. **Clone the repository**
+   ```bash
+   git clone <repository-url>
+   cd kaf-standalone-demo
+   ```
+
+2. **Create virtual environment**
+   ```bash
+   python -m venv venv
+   source venv/bin/activate  # On Windows: venv\Scripts\activate
+   ```
+
+3. **Install dependencies**
+   ```bash
+   pip install -r requirements.txt
+   ```
+
+## ⚙️ Environment Variables
+
+The application requires several environment variables to be set for proper operation:
+
+### Required Environment Variables
+
+```bash
+# Kaltura Configuration
+KALTURA_URL=https://www.kaltura.com
+KALTURA_PARENT_PARTNER_ID=your_parent_partner_id
+KALTURA_ADMIN_SECRET=your_admin_secret
+KALTURA_USER_ID=your_user_id
+
+# Template Room Entry ID for room creation
+TEMPLATE_ROOM_ENTRY_ID=your_template_room_entry_id
+
+# Flask Configuration (optional, defaults shown)
+FLASK_HOST=0.0.0.0
+FLASK_PORT=3033
+FLASK_DEBUG=False
+```
+
+### Setting Environment Variables
+
+**Option 1: Export in shell**
+```bash
+export TEMPLATE_ROOM_ENTRY_ID=your_template_room_entry_id
+export KALTURA_URL=https://www.kaltura.com
+# ... other variables
+```
+
+**Option 2: Create .env file**
+```bash
+# Create .env file in project root
+echo "TEMPLATE_ROOM_ENTRY_ID=your_template_room_entry_id" > .env
+echo "KALTURA_URL=https://www.kaltura.com" >> .env
+# ... add other variables
+```
+
+**Option 3: Set in your IDE/terminal**
+```bash
+TEMPLATE_ROOM_ENTRY_ID=your_template_room_entry_id python run.py
+```
+
+## 🚀 Usage
+
+1. **Start the server**
+   ```bash
+   python run.py
+   ```
+   Or alternatively:
+   ```bash
+   cd lib
+   python server.py
+   ```
+
+2. **Access the application**
+   - **Main Application**: http://localhost:3033/ (navigation hub)
+   - **Entry Create KAF**: http://localhost:3033/entry-create-kaf (primary interface)
+   - **Create Sub Tenant**: http://localhost:3033/create-sub-tenant (tenant management)
+
+3. **Initial Setup**
+   - Start with the **Create Sub Tenant** page to set up your Kaltura partner
+   - Credentials are automatically stored in localStorage for use across pages
+   - Use the **Entry Create KAF** page for content creation and management
+
+
+
+## 🔧 Configuration
+
+### Credential Management
+- **No Environment Variables**: All configuration via frontend forms
+- **localStorage Persistence**: Credentials saved in browser for convenience
+- **Cross-Page Sync**: Automatic credential sharing between interfaces
+- **Real-time Updates**: Form changes immediately update localStorage
+
+### Required Credentials
+- **Partner ID**: Your Kaltura partner ID
+- **Admin Secret**: Partner admin secret
+- **User ID**: Admin user ID for operations
+- **Kaltura URL**: Service URL (default: https://www.kaltura.com)
+- **Template Partner ID**: For sub-tenant creation
+- **Template Room Entry ID**: For room creation in Studio mode
+
+### Local Storage Keys dont expose in UI! (for demo purpose only)
+- `tenantId`: Partner ID
+- `tenantEmail`: Admin user email
+- `adminSecret`: Admin secret
+- `publishingCategoryId`: Default category for entries
+- `kalturaUrl`: Service URL
+
+## 🎨 User Interface Guide
+
+### Entry Create KAF Interface
+
+#### Left Column - Creation Forms
+- **Creation Mode Toggle**: Switch between Broadcast (live entries) and Studio (rooms)
+- **Entry/Room Form**: Dynamic form adapting to selected mode
+- **Entry Details**: Fetch information for existing entries
+- **Activity Logs**: Real-time operation logging with JSON display
+
+#### Middle Column - Video Player
+- **Full-Screen Video**: Embedded Kaltura player/studio interface
+- **Responsive Design**: Adapts to different screen sizes
+- **Direct Integration**: Seamless loading of generated sessions
+
+#### Right Column - Session Controls
+- **Mode Toggle**: Switch between Studio (room creation) and Player (viewing)
+- **Session Generation**: Create Kaltura sessions with custom parameters
+- **Role Management**: Configure user roles and privileges
+- **LocalStorage Manager**: View and edit stored credentials
+
+### Create Sub Tenant Interface
+- **Step-by-Step Process**: Guided tenant creation workflow
+- **Automatic Setup**: Category creation and module configuration
+- **Progress Feedback**: Real-time status updates and error handling
+- **Credential Export**: Automatic localStorage population for other pages
+
+## 📦 Dependencies
+
+```python
+Flask==2.3.3              # Web framework
+python-dotenv==1.0.0       # Environment variable support
+requests==2.31.0           # HTTP client for KAF API calls
+pycryptodome==3.19.0       # Cryptographic functions
+KalturaApiClient==21.19.0  # Official Kaltura Python client
+lxml==6.0.0               # XML processing for metadata
+```
+
+## 🐛 Troubleshooting
+
+### Common Issues
+1. **Session Creation Fails**: Verify admin secret and partner ID
+2. **Room Creation Errors**: Ensure template room entry ID is valid
+3. **Metadata Issues**: Check if KwebcastProfile exists in your partner account
+4. **CORS Errors**: Ensure proper Kaltura URL configuration
+
+### Debug Tools
+- Browser Developer Tools for JavaScript debugging
+- Flask debug output in terminal
+- Real-time logs in the Entry Create KAF interface
+- Network tab for API request/response inspection
+
+## 📄 License
+
+This project is a comprehensive port and enhancement of the original Kaltura KAF standalone demo. Please refer to Kaltura's licensing terms for usage restrictions.
+
+## 🤝 Contributing
+
+1. Fork the repository
+2. Create a feature branch (`git checkout -b feature/enhancement`)
+3. Test thoroughly with your Kaltura partner account
+4. Submit a pull request with detailed description
+
+## 🆘 Support
+
+For technical issues:
+- Check the real-time logs in the application interface
+- Verify Kaltura credentials and partner configuration
+- Consult Kaltura's official documentation for API-specific questions
+- Review browser console for JavaScript errors
+
+For Kaltura-specific questions, please refer to the official Kaltura documentation or contact Kaltura support. 

@@ -1,0 +1,571 @@
+{
+  "en": {
+    "general": {
+      "Yes": "Yes",
+      "No": "No",
+      "Cancel": "Cancel"
+    },
+    "widget label": {
+      "Chat": "Chat & Activity",
+      "Close": "Close"
+    },
+    "registration": {
+      "Welcome to Chat": "Welcome to Chat",
+      "We are processing": "We are processing your registration, jump by in a bit and start chatting",
+      "Try again": "Try Again"
+    },
+    "connections": {
+      "Welcome to Chat": "Welcome to Chat",
+      "Start Exploring": "Start Exploring",
+      "Search disabled": "The ability to search attendees has been temporarily disabled",
+      "Chat disabled": "To start a conversation, click on the “Ask a Moderator” button. If the button is not available, you may have reached an unmoderated session.",
+      "Search ready": "Ready to start connecting with other attendees?",
+      "Explore": "Connect with attendees",
+      "Connections counter": "{{count}} Connections",
+      "Discover and connect": "Discover and connect with other event attendees"
+    },
+    "conversations": {
+      "Welcome to Chat": "Welcome to chat",
+      "Cookie consent text": "Ready to connect with other attendees? Update your cookie preference",
+      "Cookie consent button": "Update settings",
+      "User opt in text": "You've disabled the private chat",
+      "User opt in button": "Enable chat"
+    },
+    "groups": {
+      "Error getting groups": "There was an issue retrieving your groups",
+      "queue is empty": "Yay! The queue is empty!"
+    },
+    "group threads": {
+      "No pending messages": "No pending messages"
+    },
+    "group threads menu": {
+      "Resolve": "Resolve",
+      "Pending": "Pending",
+      "Block": "Block",
+      "Unresolve": "Unresolve",
+      "Assign to": "Assign",
+      "Clear": "Clear"
+    },
+    "search": {
+      "No result": "No results found",
+      "Start searching": "Find connection by name, title etc..",
+      "Empty state": "Discover and chat with other attendees",
+      "Attendees result": "{{count}} attendee result",
+      "Attendees result_plural": "{{count}} attendees result",
+      "Disabled": "The ability to search attendees has been temporarily disabled"
+    },
+    "new announcement": {
+      "Schedule draft": "Schedule draft",
+      "Save as a Draft": "Save as a draft"
+    },
+    "blocked thread": {
+      "Your conversation has been blocked": "Your conversation has been blocked"
+    },
+    "blocked user": {
+      "Your account has been blocked": "Your account has been blocked"
+    },
+    "header": {
+      "Connections": "{{count}} Connections",
+      "Pending": "{{count}} pending",
+      "Requests": "{{count}} requests",
+      "Moderator View": "Moderator view",
+      "Menu": "Menu"
+    },
+    "main header": {
+      "Notifications": "Updates",
+      "Live stage": "Live stage",
+      "Private chat": "Private chat",
+      "Search": "Find connections",
+      "Search back tooltip": "Back"
+    },
+    "live stage": {
+      "tabs": {
+        "group chat": "Chat",
+        "chat with expert": "Q&A",
+        "context feed": "Feed"
+      },
+      "chat with expert": {
+        "pending singular": "1 Pending chat",
+        "pending plural": "{{count}} Pending chats",
+        "chats singular": "1 Chat",
+        "chats plural": "{{count}} Chats",
+        "moderator message": {
+          "title": "You're a moderator on this session",
+          "subtitle": "To answer attendee's questions, open the moderator app.",
+          "moderator app button": "Moderator app"
+        },
+        "no chats title": "No audience message yet",
+        "no chats description": "Answer your audience questions here",
+        "empty chat message": "Ask the expert any question"
+      }
+    },
+    "chat": {
+      "Chat disabled": "Chat has been temporarily disabled",
+      "answering as": "Answering as"
+    },
+    "settings": {
+      "Settings title": "Settings",
+      "Show Full Name": "Show my last name",
+      "Allow Toast Notification": "Allow toast notification",
+      "Enable Chat": "Enable private chat",
+      "Customize your experience": "Customize your experience",
+      "Moderation text": "Manage and support attendees during the session with our moderation app.",
+      "Moderation button": "Open app"
+    },
+    "errors": {
+      "Whoops": "Whoops!",
+      "Something went wrong": "Something went wrong",
+      "Retry": "Retry",
+      "Try Again": "Try again",
+      "We lost you": "Looks like we lost you",
+      "We lost you refresh": "Looks like we lost you, please refresh.",
+      "Failed to block the user": "Failed to block the user, please contact support",
+      "Try to block the user again": "Something went wrong. Please try to block the user again.",
+      "Failed to connect with the user": "Failed to connect with the user, please contact support",
+      "reached limit of sent invites": "You have reached your limit of sent invites, please try again later",
+      "reached max number of connections": "You have reached your max number of connections",
+      "reached limit of connection requests": "You have reached your limit of connection requests",
+      "resend connection request": "Something went wrong. Please resend your connection request.",
+      "confirm new connections again": "Something went wrong. Please confirm your new connections again.",
+      "Failed to ignore invitation": "Failed to ignore invitation, please try again",
+      "Failed to update invitation": "Failed to update invitation, please contact support",
+      "unblock the user again": "Something went wrong when trying, please try to unblock the user again",
+      "chat with expert not supported": "This entry doesn't support chat with expert. PLease contact support",
+      "group chat not supported": "This entry doesn't support group chat. PLease contact support",
+      "blocked by a moderator": "Your conversation has been blocked by a moderator",
+      "access via Moderator view": "You are a moderator of this context. Please access chat via Moderator view",
+      "limit of messages to moderated pages": "You have reached your limit of messages to moderated pages, please try again later.",
+      "limit of sent messages, try later": "You have reached your limit of sent messages, please try again later.",
+      "limit of sent messages": "You have reached your limit of sent messages.",
+      "user is no longer available on Chat": "{{user}} is no longer available on Chat",
+      "get pending message failed": "Couldn't get a pending message!",
+      "Failed to resolve": "Failed to resolve, please try again!",
+      "Failed to end shift": "Failed to end shift, please try again!",
+      "maximum number of searches": "You have reached the maximum number of searches, please try again later.",
+      "limit for displayed results": "You have reached the limit for displayed results.",
+      "update Settings again": "Something went wrong. Please update your Settings again.",
+      "setting preferences failed to update": "Your setting preferences didn't update, please try again",
+      "failed to own thread": "Failed to own thread",
+      "failed to assign thread": "Failed to assign thread",
+      "Failed to unresolve thread": "Failed unresolving your thread. Please refresh the page and try again",
+      "thread already owned": "This thread is already associated with another moderator. Please refresh the page",
+      "pinned messages error message": "Something went wrong - Pin message failed",
+      "help button default text": "Contact support"
+    },
+    "moderator offline": {
+      "You seem offline": "You seem offline, please check the network",
+      "Hang on": "Hang on while we try to reconnect",
+      "We lost you": "Looks like we lost you"
+    },
+    "session": {
+      "Happy to Help": "Happy to Help",
+      "Looks like we lost you": "Looks like we lost you, please check the network",
+      "Hang on": "Hang on while we try to reconnect"
+    },
+    "messages list": {
+      "Start Chatting": "Start Chatting",
+      "Type first message": "Type your first message below"
+    },
+    "message": {
+      "Send": "Send",
+      "Resend": "Resend",
+      "Fail": "Message couldn’t be sent.",
+      "Reply": "Reply",
+      "pin": "Pin",
+      "unpin": "Unpin",
+      "delete": "Delete",
+      "like": "Like",
+      "unlike": "Unlike",
+      "placeholder": "Write your message",
+      "placeholder empty state": "Ask your question",
+      "Quick Reply": "Quick reply",
+      "This thread is now associated with another moderator": "This thread is now associated with another moderator",
+      "Add Link": {
+        "Button Text": "Add Link",
+        "Text Label": "Label",
+        "Text Placeholder": "Actual text",
+        "Link Label": "Link",
+        "Link Placeholder": "Paste here",
+        "Cancel": "Cancel",
+        "Add": "Add"
+      },
+      "Read more": "Read more",
+      "Show less": "Show less",
+      "Sending": "Sending..."
+    },
+    "connection list": {
+      "Chat disabled": "Chat has been temporarily disabled",
+      "Conversation blocked": "Your conversation has been blocked",
+      "Blocked by user": "you were blocked by this user",
+      "Connected": "You are now connected",
+      "Connected to moderator": "Start a conversation",
+      "Pending": "Pending",
+      "Ignore": "Ignore",
+      "Accept": "Accept",
+      "Connect": "Connect",
+      "Unblock": "Unblock"
+    },
+    "notifications": {
+      "Empty state title": "Let's keep you in the loop!",
+      "Empty state subtitle": "Stay updated with all the event updates and announcements"
+    },
+    "group": {
+      "Close to limit": "You’re about to reach the 500 messages mark",
+      "Clear All Messages": "Clear All Messages",
+      "Messages back to queue": "Messages not yet resolved will be sent back to queue.\n\nWould you like to continue?",
+      "Get a pending message": "Get a pending message",
+      "Pending messages": "{{count}} pending messages",
+      "Resolved": "Resolved",
+      "Receive pending messages": "Click to receive pending messages",
+      "Clear all messages": "Clear all messages",
+      "Pending": "{{pending}} Pending",
+      "Unread and Pending": "{{unread}} Unread | {{pending}} Pending",
+      "Select a group": "Select a group to get started"
+    },
+    "legal approve": {
+      "Hi": "Welcome all!",
+      "Ready to network": "Ready to join our community?",
+      "Settings": "Settings",
+      "Accept": "Accept"
+    },
+    "browser support": {
+      "Not supported": "Sorry, looks like your browser isn't supported",
+      "How about one of these": "How about one of these?",
+      "Chrome": "Chrome",
+      "Firefox": "Firefox",
+      "Edge": "Edge",
+      "Safari": "Safari"
+    },
+    "confirm": {
+      "Report User ID": "Report User ID: {{userId}}",
+      "Cancel": "Cancel",
+      "Confirm": "Confirm",
+      "Copied": "Copied"
+    },
+    "times": {
+      "Today": "Today",
+      "Yesterday": "Yesterday"
+    },
+    "chat header": {
+      "Block message": "Once blocked, {{fullName}} won’t be able to send you messages.",
+      "Block title": "Block this connection",
+      "Block additional text": "You can report to the support team the user ID",
+      "Block copy user text": "Copy user ID",
+      "Resolved": "Resolved",
+      "Settings": "Settings",
+      "Block User": "Block",
+      "Back to pending": "Send back to pending chats",
+      "Assign": "Assign",
+      "See Message Board": "See Message Board"
+    },
+    "conversation toast": {
+      "Reply": "Reply"
+    },
+    "conversation notification": {
+      "Title": "New Message from {{senderName}}",
+      "Context Title": "New Message from {{senderName}} in {{contextName}}"
+    },
+    "connection toast": {
+      "sent you a connection request": "would like to connect with you",
+      "is now a connection": "accepted your connection request",
+      "Chat": "Start chat",
+      "Ignore": "Dismiss",
+      "Accept": "Accept"
+    },
+    "connection notification": {
+      "New Request Title": "New Connection Request",
+      "Approved Request Title": "Connection Request Approved",
+      "New Request Body": "{{attendeeName}} has sent you a connection request",
+      "Approved Request Body": "{{attendeeName}} has accepted your connection request"
+    },
+    "pending notification": {
+      "New Message Title": "New Message in {{contextName}}",
+      "New Message Body": "A new message was sent to {{contextName}}"
+    },
+    "special entry": {
+      "Start a Conversation": "Start a Conversation",
+      "Session Activity": "Session Chat"
+    },
+    "list": {
+      "Reload list": "Reload list"
+    },
+    "moderator header tabs": {
+      "My Groups": "My Groups",
+      "My Connections": "My Connections",
+      "My Messages": "My Messages ({{ownedCount}})",
+      "Pending": "Pending ({{pendingCount}})",
+      "Message Board": "Message Board"
+    },
+    "message queue": {
+      "add to my queue": "Add to my queue",
+      "reply": "Reply",
+      "Clear Confirm Title": "Clear thread",
+      "Clear Confirm Content": "Are you sure you want to clear this thread from your queue?",
+      "Failed to assign": "Oops, something went wrong. Please refresh the page and try again",
+      "Assigned successfully Message": "The message was assigned successfully to {{targetName}}",
+      "Transfer Thread Modal": {
+        "Assigning to": "Assigning to",
+        "Assign to": "Assign to...",
+        "Assign": "Assign",
+        "Comment": "Comment",
+        "No moderators": "There are no other moderators in this session"
+      },
+      "Transfer Thread Toast": {
+        "Title": "You've been assigned a new message in {{contextName}}",
+        "Text": "{{message}}",
+        "Button text": "View Message"
+      },
+      "Transfer Thread Notification": {
+        "Title": "You've been assigned a new message in {{contextName}}",
+        "Text": "{{message}}"
+      }
+    },
+    "context labels": {
+      "Session": "Session",
+      "Sponsor": "Sponsor"
+    },
+    "notifications labels": {
+      "Sponsor": "Sponsor",
+      "LIVE": "LIVE"
+    },
+    "notification default messages": {
+      "Come Watch": "Come Watch",
+      "Join Now": "Join Now",
+      "Visit Site": "Visit Site",
+      "Take Survey": "Take Survey",
+      "Come Visit": "Come Visit"
+    },
+    "threads on air": {
+      "Reload": "Reload Message Board",
+      "Anonymous": "Anonymous",
+      "Question from the audience": "Question from the audience",
+      "See all": "See all",
+      "Ask the Moderator": "Ask the Moderator",
+      "Published": "Published",
+      "Unpublished": "Unpublished",
+      "Draft": "Draft",
+      "Add a new question": "Add a new question",
+      "Add to Message Board": "Add to Message Board",
+      "Attendee": "Attendee",
+      "Question": "Question",
+      "Moderator": "Moderator",
+      "Answer": "Answer",
+      "Publish Message": "Publish Message",
+      "Save as Draft": "Save as Draft",
+      "Cancel": "Cancel",
+      "Publish Message Board": "Publish Message Board",
+      "Are you sure you want to publish": "Are you sure you want to publish the Q&A to the Message Board?",
+      "Cancel Order": "Cancel Order",
+      "Are you sure you don’t want to publish": "Are you sure you don’t want to publish this message to the Message Board?",
+      "Yes": "Yes",
+      "No": "No",
+      "Your message was not published": "Your message was not published. Please try again",
+      "Publish a Q&A message to all attendees in this group": "Publish a Q&A message to all attendees in this group",
+      "Failed to publish": "Something went wrong with unpublishing your Q&A, please refresh the page and try again",
+      "Failed to unpublish": "Something went wrong with publishing your Q&A, please refresh the page and try again",
+      "Unpublish Message Board": "Unpublish Message Board",
+      "Unpublish Message Board Text": "Are you sure you want to unpublish the Q&A from the Message Board?",
+      "Change Order": "Change Order",
+      "Publish Order": "Publish Order",
+      "Cancel Order Text": "Are you sure you don’t want to publish this order to the Message Board?",
+      "Publish Order Text": "Are you sure you want to publish this order to the Message Board?",
+      "Failed to order": "Something went wrong with ordering your Q&A, please refresh the page and try again",
+      "No Results": "No Results",
+      "Empty state": {
+        "title": "Welcome to the feed!",
+        "subtitle": "Have you asked a question? Answers and pinned messages can be found here"
+      }
+    },
+    "Message Board": {
+      "add new": "Add new",
+      "new poll": "Poll",
+      "new message": "Message",
+      "publish poll confirmation header": "Are you sure you want to publish the poll?",
+      "publish poll confirmation text": "The poll will be appended to the beginning of the queue",
+      "cancel poll confirmation header": "Cancel Order",
+      "cancel new poll confirmation text": "Are you sure you don’t want to publish this poll?",
+      "cancel edit poll confirmation text": "Are you sure you don’t want to save the changes?",
+      "save poll confirmation header": "Are you sure you want to save the changes to the poll?",
+      "save draft poll confirmation text": "Are you sure you want to save the changes? The poll will remain a draft",
+      "save published poll confirmation text": "Are you sure you want to save the changes? The changes will be visible to the attendees",
+      "save unpublished poll confirmation text": "Are you sure you want to save the changes? They will not be visible to the attendees until the poll is published",
+      "error creating poll": "An error has occurred creating your poll. Please refresh the page and try again",
+      "error editing poll": "Failed to edit poll. Please refresh the page and try again",
+      "Failed to order polls": "Something went wrong with ordering your polls, please refresh the page and try again",
+      "Failed to publish poll": "Something went wrong with publishing your poll, please refresh the page and try again",
+      "Failed to unpublish poll": "Something went wrong with unpublishing your poll, please refresh the page and try again",
+      "Failed to update poll": "Something went wrong with updating your poll, please refresh the page and try again",
+      "Failed to end poll": "Failed to end poll. Please refresh the page and try again",
+      "Failed to submit your vote": "There was an error submitting your vote, please refresh and try again",
+      "Empty list": "Publish a Poll or Q&A message to all attendees in this group",
+      "Add New Form Header": "Add to Message Board",
+      "Edit Form Header": "Edit",
+      "Updated by": "Updated by",
+      "poll form": {
+        "Show Results": "Show Results",
+        "Poll Question Title": "Poll Question",
+        "Poll Question Placeholder": "Write your question here...",
+        "Poll Answer Title": "Answer",
+        "Poll Answer Placeholder": "Your answer...",
+        "Add Answer Button": "Add Answer",
+        "Publish Button": "Publish Poll",
+        "Delete Answer": "Delete",
+        "Save": "Save changes"
+      },
+      "Poll list item": {
+        "In progress title": "Poll in progress",
+        "Draft title": "Poll",
+        "Ended title": "Poll Ended",
+        "Publish poll confirmation title": "Publish this poll",
+        "Publish poll confirmation content": "Are you sure you want to publish this poll? It will be visible to all attendees.",
+        "Publish ended poll confirmation content": "Are you sure you want to publish this poll? The results will be visible to all attendees and voting will be disabled",
+        "Unpublish poll confirmation title": "Unpublish this poll",
+        "Unpublish active poll confirmation content": "Are you sure you want to unpublish this poll? It will end, be removed from the Message Board and attendees won’t be able to vote or view results. Ended polls can’t be turned to back to active",
+        "Unpublish ended poll confirmation content": "Are you sure you want to unpublish this poll? It will be removed from the Message Board and attendees won’t be able to vote or view results",
+        "Menu End Poll": "End Poll",
+        "Menu Show Results": "Show Results",
+        "End poll confirmation title": "End this poll",
+        "End poll confirmation content": "Are you sure you want to end this poll? Attendees will no longer be able to vote"
+      },
+      "Message Board Item": {
+        "published": "Published",
+        "published with results": "Published with results",
+        "unpublished": "Unpublished",
+        "draft": "Draft",
+        "Menu Publish": "Publish",
+        "Menu Unpublish": "Unpublish",
+        "Menu Edit": "Edit"
+      },
+      "Poll Results": {
+        "Answers": "Answers"
+      },
+      "Poll status": {
+        "in progress": "in progress",
+        "ended": "ended"
+      },
+      "Message Board Attendee": {
+        "Poll thank you message": "Thanks for participating!",
+        "Poll loading results": "Loading results",
+        "Poll header": "Poll",
+        "Q&A header": "Q&A",
+        "Pinned message header": "Pinned Message",
+        "Show more": "more",
+        "Show less": "less"
+      },
+      "Poll Toast": {
+        "Show Results": "See results",
+        "Submit": "Submit"
+      },
+      "Poll Notification": {
+        "New poll in context": "New poll in {{contextName}}",
+        "Poll ended in context": "Poll Ended in {{contextName}}"
+      }
+    },
+    "admin": {
+      "form errors": {
+        "required": "This field is required.",
+        "max chars": "{{max}} characters max",
+        "invalid url": "This field must be a valid url.",
+        "Url must be https": "Url must be https"
+      },
+      "table columns": {
+        "Sender": "Sender",
+        "Target": "Target",
+        "Template": "Template",
+        "URL": "URL",
+        "Message": "Message",
+        "Button": "Button",
+        "Label": "Label",
+        "Status": "Status",
+        "Send time": "Send Time",
+        "Actions": "Actions",
+        "Send at": "Send at"
+      },
+      "new announcement": {
+        "Edit Draft": "Edit Draft",
+        "New Announcement": "New Announcement",
+        "Sponsors not available": "Sponsors not available - KS expired, try to refresh or contact support",
+        "Everyone": "Everyone",
+        "Sender": "Sender",
+        "Organizer": "Organizer",
+        "Executive Summit": "Executive Summit",
+        "Sponsor": "Sponsor",
+        "Select Sponsor": "Select Sponsor",
+        "loading...": "loading...",
+        "Custom": "Custom",
+        "Custom Name": "Custom Name (Truncated if long)",
+        "Image, full URL": "112x112px image, full URL",
+        "Audience": "Audience",
+        "All": "All",
+        "Groups": "Groups",
+        "Please select a target": "Please select a target",
+        "Specific target": "Specific target",
+        "Broadcast a message": "Broadcast a message to all users that on specific entry or channel:",
+        "Include in notifications list": "Include in notifications list",
+        "Template": "Template",
+        "Message": "Message",
+        "Write a short message to your audience.": "Write a short message to your audience.",
+        "Button": "Button",
+        "Predefined buttons": "Predefined buttons",
+        "Select button type": "Please select a button type",
+        "Custom Button": "Custom Button",
+        "Custom button label": "Write a custom button label.",
+        "URL": "URL",
+        "The URL can lead": "The URL can lead to a booth page or an external website",
+        "Replace the current window": "Replace the current window",
+        "Opened in a new tab": "Opened in a new tab",
+        "Please select a label": "Please select a label",
+        "Resend": "Resend",
+        "Send Now": "Send Now",
+        "Update Draft": "Update Draft",
+        "Create Draft": "Create Draft",
+        "Cancel": "Cancel"
+      },
+      "announcement draft": {
+        "Delete partial": "Are you sure you want to delete {{count}} selected draft?",
+        "Delete partial_plural": "Are you sure you want to delete {{count}} selected drafts?",
+        "Delete all": "Are you sure you want to delete ALL drafts?",
+        "Delete single": "Are you sure you want to delete this draft?",
+        "Search draft": "Search Draft",
+        "Draft announcement amount": "{{count}} Draft Announcement",
+        "Draft announcement amount_plural": "{{count}} Draft Announcements",
+        "Selected": "{{count}} Selected",
+        "Delete draft success": "{{count}} selected draft deleted",
+        "Delete draft success_plural": "{{count}} selected drafts are deleted"
+      },
+      "announcement list": {
+        "Delete notification": "Are you sure you want to delete this notification?",
+        "Search Announcement": "Search Announcement",
+        "Sent Announcement": "{{count}} Sent Announcement",
+        "Sent Announcement_plural": "{{count}} Sent Announcements"
+      },
+      "pinned messages": {
+        "error message": "Something went wrong - Pin message failed"
+      }
+    },
+    "group chat": {
+      "Ask the Moderator": "Ask our Moderator",
+      "Post message": "Post",
+      "Delete": "Delete",
+      "Deleted comment": "This message has been deleted.",
+      "Pinned messages header": "Pinned messages",
+      "empty state": {
+        "comments": {
+          "header": "Welcome to the chat!",
+          "label": "Express your thoughts here."
+        }
+      }
+    },
+    "pinnedMessages one": "1 pinned message",
+    "pinnedMessages plural": "{{count}} pinned messages",
+    "sidebar": {
+      "buttons": {
+        "Updates": "Updates",
+        "Live Stage": "Live stage",
+        "Q&A": "Q&A",
+        "Private Chat": "Private chat",
+        "More": "More"
+      }
+    }
+  }
+}
