@@ -4,6 +4,8 @@ Provides functionality for creating sub-tenants, managing categories, and partne
 """
 
 import time
+import requests
+import logging
 from typing import Optional, Dict, Any
 
 from KalturaClient.Plugins.Core import (
@@ -104,7 +106,7 @@ class KalturaSubTenantModel:
         # Configure modules and features
         modules_to_enable = [
             "hosted", "theming", "newrow", "chatandcollaboration",
-            "embeddedrooms", "Meetingentry", "kaftestme", "kwebcast"
+            "embeddedrooms", "Meetingentry", "kaftestme", "kwebcast","staffbasekmeautosetup"
         ]
         
         partner.additionalParams = []
@@ -182,35 +184,20 @@ class KalturaSubTenantModel:
             Exception: If category creation fails
         """
         try:
-            # Always attempt to locate the "MediaSpace>site>channels" category automatically
-            try:
-                print("🔍 Searching for parent category 'MediaSpace>site>channels' ...")
+            # Locate the "MediaSpace>site>channels" category
+            print("🔍 Searching for parent category 'MediaSpace>site>channels' ...")
 
-                # Retry logic: attempt to locate the parent category up to 3 times,
-                # pausing 5 seconds between attempts in case the category has not
-                # yet been created by the instance.
-                max_attempts = 3
-                for attempt in range(1, max_attempts + 1):
-                    cat_filter = KalturaCategoryFilter()
-                    cat_filter.fullNameEqual = "MediaSpace>site>channels"
+            cat_filter = KalturaCategoryFilter()
+            cat_filter.fullNameEqual = "MediaSpace>site>channels"
 
-                    # No pager needed; passing None uses default server-side pagination
-                    search_result = self.client.category.list(cat_filter, None)
+            # No pager needed; passing None uses default server-side pagination
+            search_result = self.client.category.list(cat_filter, None)
 
-                    if search_result and hasattr(search_result, 'objects') and search_result.objects:
-                        parent_category_id = getattr(search_result.objects[0], 'id', None)
-                        print(f"✅ Found parent category with ID: {parent_category_id}")
-                        break
-                    else:
-                        if attempt < max_attempts:
-                            print(f"⚠️ Parent category not found (attempt {attempt}/{max_attempts}). Waiting 5 seconds before retrying...")
-                            time.sleep(5)
-                        else:
-                            raise Exception("Parent category 'MediaSpace>site>channels' not found")
+            if not search_result or not hasattr(search_result, 'objects') or not search_result.objects:
+                raise Exception("Parent category 'MediaSpace>site>channels' not found")
 
-            except Exception as search_error:
-                print(f"❌ Error locating parent category: {search_error}")
-                raise search_error
+            parent_category_id = getattr(search_result.objects[0], 'id', None)
+            print(f"✅ Found parent category with ID: {parent_category_id}")
 
             # Proceed to create the publishing category under the resolved parent_category_id
             category = KalturaCategory()
@@ -236,4 +223,96 @@ class KalturaSubTenantModel:
             
         except Exception as error:
             print(f"❌ Error creating publishing category: {error}")
+            raise error
+
+    def check_kaf_instance_ready(self) -> bool:
+        """
+        Check if KAF instance is ready by calling the version endpoint.
+        
+        Returns:
+            bool: True if instance is ready (HTTP 200 + version), False otherwise
+            
+        Note:
+            This method performs a single check and returns immediately.
+            Use in a loop with delays for polling behavior.
+        """
+        try:
+            kaf_url = f"https://{self.partner_id}.kaf.kaltura.com/version"
+            
+            # Configure logging
+            logging.basicConfig(level=logging.INFO)
+            logger = logging.getLogger(__name__)
+            
+            logger.info(f"🔍 Checking KAF instance readiness for partner {self.partner_id}")
+            logger.info(f"📡 Checking endpoint: {kaf_url}")
+            
+            response = requests.get(kaf_url, timeout=30)
+            
+            if response.status_code == 200:
+                version = response.text.strip()
+                logger.info(f"✅ KAF instance is ready! Version: {version}")
+                return True
+                
+            elif response.status_code == 500:
+                logger.info(f"⏳ KAF instance not ready yet (HTTP 500)")
+                return False
+            else:
+                logger.warning(f"⚠️  Unexpected HTTP status: {response.status_code}")
+                return False
+                
+        except requests.exceptions.RequestException as e:
+            logger.warning(f"⚠️  Request failed: {str(e)}")
+            return False
+        except Exception as e:
+            logger.error(f"❌ Unexpected error during KAF check: {str(e)}")
+            return False 
+
+    def automate_embedded_rooms_setup(self) -> Dict[str, Any]:
+        """
+        Automate embedded rooms setup by calling the staffbasekmeautosetup endpoint.
+        
+        Returns:
+            Dict[str, Any]: Response from the automation endpoint
+            
+        Raises:
+            Exception: If automation setup fails
+        """
+        try:
+            print(f"🔧 Starting embedded rooms automation setup for partner {self.partner_id}")
+            
+            # Get the existing KS from the client initialized in __init__
+            ks = self.client.getKs()
+            
+            if not ks:
+                raise Exception('No Kaltura Session (KS) available from existing client')
+            
+            print(f"✅ Using existing KS for partner {self.partner_id}")
+            
+            # Call the automation endpoint
+            kaf_url = f"https://{self.partner_id}.kaf.kaltura.com/staffbasekmeautosetup/index/config/automate-embedded-rooms-setup"
+            
+            headers = {
+                'X-Kaltura-Session': ks,
+                'Content-Type': 'application/json'
+            }
+            
+            print(f"📡 Calling automation endpoint: {kaf_url}")
+            
+            response = requests.post(kaf_url, headers=headers, timeout=60)
+            
+            if response.status_code == 200:
+                print(f"✅ Embedded rooms automation setup completed successfully")
+                return {
+                    'success': True,
+                    'status_code': response.status_code,
+                    'response': response.text,
+                    'ks': ks
+                }
+            else:
+                error_msg = f"Automation endpoint returned HTTP {response.status_code}: {response.text}"
+                print(f"❌ {error_msg}")
+                raise Exception(error_msg)
+                
+        except Exception as error:
+            print(f"❌ Error during embedded rooms automation setup: {error}")
             raise error 

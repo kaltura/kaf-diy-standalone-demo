@@ -473,13 +473,84 @@ class KalturaService:
             }
             new_sub_tenant_model = KalturaService._create_sub_tenant_model(new_tenant_data)
             
-            # Create the publishing category using the new sub-tenant's credentials
-            category_data = new_sub_tenant_model.create_publishing_category()
+            # Check if KAF instance is ready using the sub-tenant model
+            kaf_status = None
+            try:
+                print("🔍 Checking if KAF instance is ready...")
+                
+                # Use the sub-tenant model to check KAF readiness
+                start_time = time.time()
+                max_wait_time = 100      
+                check_interval = 1    # 10 second
+                attempts = 0
+                
+                while True:
+                    attempts += 1
+                    elapsed_time = time.time() - start_time
+                    
+                    print(f"🔄 Attempt {attempts}: Checking KAF instance (elapsed: {elapsed_time:.1f}s)")
+                    
+                    # Check if KAF instance is ready
+                    is_ready = new_sub_tenant_model.check_kaf_instance_ready()
+                    
+                    if is_ready:
+                        print(f"✅ KAF instance is ready!")
+                        print(f"🎉 Total time: {elapsed_time:.1f} seconds, Total attempts: {attempts}")
+                        
+                        # Automate embedded rooms setup now that KAF is ready
+                        try:
+
+                             # Create the publishing category using the new sub-tenant's credentials
+                            category_data = new_sub_tenant_model.create_publishing_category()
+                            print(f"✅ Publishing category created: {category_data}")
+
+                            print("🔧 Starting embedded rooms automation setup...")
+                            automation_result = new_sub_tenant_model.automate_embedded_rooms_setup()
+                            print(f"✅ Embedded rooms automation completed: {automation_result}")
+                            
+                           
+                            
+                        except Exception as automation_error:
+                            print(f"⚠️  Embedded rooms automation failed: {automation_error}")
+                            # Continue with the process even if automation fails
+                        
+                        kaf_status = {
+                            'success': True,
+                            'partner_id': int(new_partner_id),
+                            'version': 'Ready',
+                            'total_time_seconds': elapsed_time,
+                            'total_attempts': attempts,
+                            'kaf_url': f"https://{new_partner_id}.kaf.kaltura.com/version"
+                        }
+                        break
+                    
+                    else:
+                        print(f"⏳ KAF instance not ready yet - attempt {attempts}")
+                        
+                        # Check if we've exceeded max wait time
+                        if elapsed_time >= max_wait_time:
+                            error_msg = f"KAF instance not ready after {max_wait_time} seconds ({attempts} attempts)"
+                            print(f"❌ {error_msg}")
+                            raise Exception(error_msg)
+                        
+                        # Wait before next check
+                        if elapsed_time + check_interval < max_wait_time:
+                            print(f"⏳ Waiting {check_interval} seconds before next check...")
+                            time.sleep(check_interval)
+                        else:
+                            # Don't sleep if we're about to hit max wait time
+                            break
+                            
+            except Exception as kaf_error:
+                print(f"⚠️  KAF instance readiness check failed: {kaf_error}")
+                print("💡 You can manually check later using the check_kaf_instance_ready method")
+                kaf_status = {'success': False, 'error': str(kaf_error)}
             
             return jsonify({
                 'success': True,
                 'result': tenant_response,
-                'category': category_data
+                'category': category_data,
+                'kaf_status': kaf_status
             }), 200
         except ValueError as ve:
             return jsonify({'success': False, 'message': str(ve)}), 400
@@ -499,6 +570,9 @@ class KalturaService:
             # Use SubTenantModel for authentication and category creation
             # The create_publishing_category method automatically finds the parent category
             sub_tenant_model = KalturaService._create_sub_tenant_model(data)
+
+
+            
             category_data = sub_tenant_model.create_publishing_category()
 
             return jsonify({
@@ -513,4 +587,88 @@ class KalturaService:
             return jsonify({
                 'success': False,
                 'message': str(error) or 'Failed to create publishing category'
+            }), 500
+
+    @staticmethod
+    def check_kaf_readiness_endpoint(data):
+        """Standalone endpoint to check KAF instance readiness"""
+        try:
+            partner_id = data.get('partnerId')
+            max_wait_time = data.get('maxWaitTime', 300)  # Default 5 minutes
+            check_interval = data.get('checkInterval', 5)  # Default 5 seconds
+            
+            if not partner_id:
+                return jsonify({'success': False, 'message': 'Missing required parameter: partnerId'}), 400
+            
+            try:
+                partner_id_int = int(partner_id)
+            except ValueError:
+                return jsonify({'success': False, 'message': 'Invalid partnerId: must be a number'}), 400
+            
+            # Create a temporary sub-tenant model for checking
+            temp_data = {
+                'partnerId': str(partner_id_int),
+                'kalturaUrl': 'https://www.kaltura.com',  # Dummy URL
+                'adminSecret': 'dummy',  # Dummy secret
+                'userId': 'dummy'  # Dummy user ID
+            }
+            
+            temp_sub_tenant_model = KalturaService._create_sub_tenant_model(temp_data)
+            
+            # Check KAF instance readiness using the sub-tenant model
+            start_time = time.time()
+            attempts = 0
+            
+            while True:
+                attempts += 1
+                elapsed_time = time.time() - start_time
+                
+                print(f"🔄 Attempt {attempts}: Checking KAF instance (elapsed: {elapsed_time:.1f}s)")
+                
+                # Check if KAF instance is ready
+                is_ready = temp_sub_tenant_model.check_kaf_instance_ready()
+                
+                if is_ready:
+                    print(f"✅ KAF instance is ready!")
+                    print(f"🎉 Total time: {elapsed_time:.1f} seconds, Total attempts: {attempts}")
+                    
+                    kaf_status = {
+                        'success': True,
+                        'partner_id': partner_id_int,
+                        'version': 'Ready',
+                        'total_time_seconds': elapsed_time,
+                        'total_attempts': attempts,
+                        'kaf_url': f"https://{partner_id_int}.kaf.kaltura.com/version"
+                    }
+                    break
+                
+                else:
+                    print(f"⏳ KAF instance not ready yet - attempt {attempts}")
+                    
+                    # Check if we've exceeded max wait time
+                    if elapsed_time >= max_wait_time:
+                        error_msg = f"KAF instance not ready after {max_wait_time} seconds ({attempts} attempts)"
+                        print(f"❌ {error_msg}")
+                        raise Exception(error_msg)
+                    
+                    # Wait before next check
+                    if elapsed_time + check_interval < max_wait_time:
+                        print(f"⏳ Waiting {check_interval} seconds before next check...")
+                        time.sleep(check_interval)
+                    else:
+                        # Don't sleep if we're about to hit max wait time
+                        break
+            
+            return jsonify({
+                'success': True,
+                'kaf_status': kaf_status
+            }), 200
+            
+        except ValueError as ve:
+            return jsonify({'success': False, 'message': str(ve)}), 400
+        except Exception as error:
+            print(f'Error checking KAF instance readiness: {error}')
+            return jsonify({
+                'success': False,
+                'message': str(error) or 'Failed to check KAF instance readiness'
             }), 500 
