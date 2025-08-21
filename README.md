@@ -205,6 +205,104 @@ TEMPLATE_ROOM_ENTRY_ID=your_template_room_entry_id python run.py
 - **Progress Feedback**: Real-time status updates and error handling
 - **Credential Export**: Automatic localStorage population for other pages
 
+## 🔧 Sub-Tenant Creation Implementation
+
+### Overview
+The application provides a complete implementation for creating Kaltura sub-tenants with automatic module configuration and KAF instance setup. This replaces the need for manual API calls and curl commands.
+
+### Core Implementation Files
+
+#### Backend Models (`lib/models/sub_tenant_model.py`)
+The `KalturaSubTenantModel` class handles all sub-tenant operations:
+
+- **Partner Registration**: Uses `partner->register` API with proper module configuration
+- **Module Management**: Automatically enables required KAF modules via `additionalParams`
+- **KAF Instance Monitoring**: Checks instance readiness with retry logic
+- **Automated Setup**: Calls the embedded rooms automation endpoint
+
+#### Service Layer (`lib/services/kaltura_service.py`)
+The `KalturaService.create_sub_tenant()` method orchestrates the entire process:
+
+- **Environment Configuration**: Reads credentials from environment variables
+- **Multi-Step Workflow**: Creates tenant → waits for KAF → creates category → runs automation
+- **Progress Tracking**: Real-time updates via Server-Sent Events
+- **Error Handling**: Comprehensive error management with fallbacks
+
+#### API Endpoints (`lib/routes.py`)
+RESTful endpoints for sub-tenant operations:
+
+- `POST /api/kaltura/create-sub-tenant`: Complete tenant creation workflow
+- `POST /api/kaltura/create-publishing-category`: Category management
+- `GET /api/kaltura/progress-stream`: Real-time progress updates
+
+#### Frontend Interface (`public/pages/create-sub-tenant/`)
+User interface for triggering sub-tenant creation:
+
+- **Single-Click Creation**: Automated workflow with no manual input required
+- **Credential Storage**: Automatic localStorage population for cross-page usage
+- **Result Display**: JSON response formatting with success/error handling
+
+### Module Configuration
+
+The system automatically configures the following KAF modules during partner creation:
+
+**Module List**: See `lib/models/sub_tenant_model.py` lines 108-109 for the complete list of enabled modules.
+
+**Module Activation**: See `lib/models/sub_tenant_model.py` lines 115-125 for how modules are enabled via `additionalParams` with both the module list and individual enable flags.
+
+### KAF Instance Readiness Monitoring
+
+Instead of manual curl commands, the system automatically monitors KAF instance readiness:
+
+**Instance Check Method**: See `lib/models/sub_tenant_model.py` lines 280-300 for the `check_kaf_instance_ready()` method that replaces manual curl calls to the version endpoint.
+
+**Intelligent Polling**: See `lib/services/kaltura_service.py` lines 480-520 for the service layer implementation with configurable timeouts and retry logic.
+
+### Automated Embedded Rooms Setup
+
+Once the KAF instance is ready, the system automatically calls the setup endpoint:
+
+**Automation Method**: See `lib/models/sub_tenant_model.py` lines 320-350 for the `automate_embedded_rooms_setup()` method that replaces manual curl calls to the staffbasekmeautosetup endpoint.
+
+### Publishing Category Creation
+
+The system automatically creates a publishing category under the standard hierarchy:
+
+**Category Creation**: See `lib/models/sub_tenant_model.py` lines 200-250 for the `create_publishing_category()` method that automatically locates the "MediaSpace>site>channels" parent and creates the publishing category.
+
+### Usage Example
+
+To create a sub-tenant, simply navigate to the Create Sub Tenant page and click the create button. The system will:
+
+1. **Create Partner**: Register new partner with all required modules
+2. **Monitor KAF**: Wait for KAF instance to become ready
+3. **Create Category**: Set up publishing category under MediaSpace>site>channels
+4. **Run Automation**: Execute embedded rooms setup automation
+5. **Store Credentials**: Save all credentials to localStorage for other pages
+
+### Environment Variables Required
+
+```bash
+# Required for sub-tenant creation
+KALTURA_PARENT_PARTNER_ID=your_parent_partner_id
+KALTURA_ADMIN_SECRET=your_admin_secret
+KALTURA_USER_ID=your_user_id
+KALTURA_URL=https://www.kaltura.com
+KALTURA_TEMPLATE_PARTNER_ID=your_template_partner_id
+KALTURA_PARTNER_NAME=your_new_partner_name
+KALTURA_PARTNER_EMAIL=admin@yournewpartner.com
+KALTURA_PARTNER_DESCRIPTION=your_partner_description
+```
+
+### Benefits Over Manual Implementation
+
+- **No Manual API Calls**: Complete automation of the entire workflow
+- **Built-in Retry Logic**: Intelligent polling for KAF instance readiness
+- **Progress Tracking**: Real-time updates via Server-Sent Events
+- **Error Handling**: Comprehensive error management with fallbacks
+- **Credential Management**: Automatic storage and sharing across interfaces
+- **Module Configuration**: Pre-configured with all required KAF modules
+
 ## 📦 Dependencies
 
 ```python

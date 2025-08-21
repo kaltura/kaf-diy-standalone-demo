@@ -26,6 +26,12 @@ class KalturaSubTenantModel:
     - Partner configuration and module management
     """
     
+    # Configuration constants
+    DEFAULT_PAGE_SIZE = 500
+    DEFAULT_PAGE_INDEX = 1
+    DEFAULT_SEARCH_ATTEMPTS = 3
+    DEFAULT_SEARCH_WAIT_TIME = 10  # seconds
+    
     def __init__(self, partner_id: int, service_url: str, admin_secret: str, user_id: str):
         """
         Initialize the sub-tenant model with admin client.
@@ -41,6 +47,9 @@ class KalturaSubTenantModel:
         self.admin_secret = admin_secret
         self.user_id = user_id
         self.client = get_admin_client(partner_id, service_url, admin_secret, user_id)
+        
+        # Initialize logger for this instance
+        self.logger = logging.getLogger(__name__)
     
     def create_sub_tenant(
         self, 
@@ -142,8 +151,8 @@ class KalturaSubTenantModel:
         try:
             filter_obj = None  # No filter to get all categories
             pager = KalturaFilterPager()
-            pager.pageSize = 500  # Ensure we get all categories
-            pager.pageIndex = 1
+            pager.pageSize = self.DEFAULT_PAGE_SIZE  # Ensure we get all categories
+            pager.pageIndex = self.DEFAULT_PAGE_INDEX
             result = self.client.category.list(filter_obj, pager)
 
             if not result:
@@ -189,9 +198,9 @@ class KalturaSubTenantModel:
                 print("🔍 Searching for parent category 'MediaSpace>site>channels' ...")
 
                 # Retry logic: attempt to locate the parent category up to 3 times,
-                # pausing 5 seconds between attempts in case the category has not
+                # pausing between attempts in case the category has not
                 # yet been created by the instance.
-                max_attempts = 3
+                max_attempts = self.DEFAULT_SEARCH_ATTEMPTS
                 for attempt in range(1, max_attempts + 1):
                     cat_filter = KalturaCategoryFilter()
                     cat_filter.fullNameEqual = "MediaSpace>site>channels"
@@ -205,8 +214,8 @@ class KalturaSubTenantModel:
                         break
                     else:
                         if attempt < max_attempts:
-                            print(f"⚠️ Parent category not found (attempt {attempt}/{max_attempts}). Waiting 5 seconds before retrying...")
-                            time.sleep(10)
+                            print(f"⚠️ Parent category not found (attempt {attempt}/{max_attempts}). Waiting {self.DEFAULT_SEARCH_WAIT_TIME} seconds before retrying...")
+                            time.sleep(self.DEFAULT_SEARCH_WAIT_TIME)
                         else:
                             raise Exception("Parent category 'MediaSpace>site>channels' not found")
 
@@ -254,32 +263,28 @@ class KalturaSubTenantModel:
         try:
             kaf_url = f"https://{self.partner_id}.kaf.kaltura.com/version"
             
-            # Configure logging
-            logging.basicConfig(level=logging.INFO)
-            logger = logging.getLogger(__name__)
-            
-            logger.info(f"🔍 Checking KAF instance readiness for partner {self.partner_id}")
-            logger.info(f"📡 Checking endpoint: {kaf_url}")
+            self.logger.info(f"🔍 Checking KAF instance readiness for partner {self.partner_id}")
+            self.logger.info(f"📡 Checking endpoint: {kaf_url}")
             
             response = requests.get(kaf_url, timeout=30)
             
             if response.status_code == 200:
                 version = response.text.strip()
-                logger.info(f"✅ KAF instance is ready! Version: {version}")
+                self.logger.info(f"✅ KAF instance is ready! Version: {version}")
                 return True
                 
             elif response.status_code == 500:
-                logger.info(f"⏳ KAF instance not ready yet (HTTP 500)")
+                self.logger.info(f"⏳ KAF instance not ready yet (HTTP 500)")
                 return False
             else:
-                logger.warning(f"⚠️  Unexpected HTTP status: {response.status_code}")
+                self.logger.warning(f"⚠️  Unexpected HTTP status: {response.status_code}")
                 return False
                 
         except requests.exceptions.RequestException as e:
-            logger.warning(f"⚠️  Request failed: {str(e)}")
+            self.logger.warning(f"⚠️  Request failed: {str(e)}")
             return False
         except Exception as e:
-            logger.error(f"❌ Unexpected error during KAF check: {str(e)}")
+            self.logger.error(f"❌ Unexpected error during KAF check: {str(e)}")
             return False 
 
     def automate_embedded_rooms_setup(self) -> Dict[str, Any]:
