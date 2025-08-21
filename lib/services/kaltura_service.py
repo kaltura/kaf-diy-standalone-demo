@@ -13,7 +13,7 @@ class KalturaService:
     # Configuration constants
     DEFAULT_SESSION_DURATION = 3600  # 1 hour in seconds
     DEFAULT_KAF_MAX_WAIT_TIME = 100  # Maximum wait time for KAF readiness in seconds
-    DEFAULT_KAF_CHECK_INTERVAL = 30  # Interval between KAF readiness checks in seconds
+    DEFAULT_KAF_CHECK_INTERVAL = 60  # Interval between KAF readiness checks in seconds
     DEFAULT_KAF_READINESS_MAX_WAIT = 300  # Default max wait time for KAF readiness endpoint
     DEFAULT_KAF_READINESS_CHECK_INTERVAL = 10  # Default check interval for KAF readiness endpoint
     
@@ -479,6 +479,10 @@ class KalturaService:
                 max_wait_time = KalturaService.DEFAULT_KAF_MAX_WAIT_TIME      
                 check_interval = KalturaService.DEFAULT_KAF_CHECK_INTERVAL
                 attempts = 0
+                
+                # Wait for initial delay to ensure KAF instance has time to be created
+                print(f"⏳ Waiting {check_interval} seconds before first check to ensure KAF instance creation...")
+                time.sleep(check_interval)
                 
                 while True:
                     attempts += 1
