@@ -6,6 +6,13 @@ Run this script to start the Flask application
 
 import sys
 import os
+from dotenv import load_dotenv
+
+# Load environment variables from .env file
+script_dir = os.path.dirname(os.path.abspath(__file__))
+project_root = os.path.dirname(script_dir)
+env_path = os.path.join(project_root, '.env')
+load_dotenv(env_path)
 
 # Add the lib directory to the Python path
 sys.path.insert(0, os.path.join(os.path.dirname(__file__), 'lib'))
