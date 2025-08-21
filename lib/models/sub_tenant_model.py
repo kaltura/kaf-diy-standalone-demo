@@ -184,20 +184,35 @@ class KalturaSubTenantModel:
             Exception: If category creation fails
         """
         try:
-            # Locate the "MediaSpace>site>channels" category
-            print("🔍 Searching for parent category 'MediaSpace>site>channels' ...")
+            # Always attempt to locate the "MediaSpace>site>channels" category automatically
+            try:
+                print("🔍 Searching for parent category 'MediaSpace>site>channels' ...")
 
-            cat_filter = KalturaCategoryFilter()
-            cat_filter.fullNameEqual = "MediaSpace>site>channels"
+                # Retry logic: attempt to locate the parent category up to 3 times,
+                # pausing 5 seconds between attempts in case the category has not
+                # yet been created by the instance.
+                max_attempts = 3
+                for attempt in range(1, max_attempts + 1):
+                    cat_filter = KalturaCategoryFilter()
+                    cat_filter.fullNameEqual = "MediaSpace>site>channels"
 
-            # No pager needed; passing None uses default server-side pagination
-            search_result = self.client.category.list(cat_filter, None)
+                    # No pager needed; passing None uses default server-side pagination
+                    search_result = self.client.category.list(cat_filter, None)
 
-            if not search_result or not hasattr(search_result, 'objects') or not search_result.objects:
-                raise Exception("Parent category 'MediaSpace>site>channels' not found")
+                    if search_result and hasattr(search_result, 'objects') and search_result.objects:
+                        parent_category_id = getattr(search_result.objects[0], 'id', None)
+                        print(f"✅ Found parent category with ID: {parent_category_id}")
+                        break
+                    else:
+                        if attempt < max_attempts:
+                            print(f"⚠️ Parent category not found (attempt {attempt}/{max_attempts}). Waiting 5 seconds before retrying...")
+                            time.sleep(10)
+                        else:
+                            raise Exception("Parent category 'MediaSpace>site>channels' not found")
 
-            parent_category_id = getattr(search_result.objects[0], 'id', None)
-            print(f"✅ Found parent category with ID: {parent_category_id}")
+            except Exception as search_error:
+                print(f"❌ Error locating parent category: {search_error}")
+                raise search_error
 
             # Proceed to create the publishing category under the resolved parent_category_id
             category = KalturaCategory()
@@ -223,7 +238,7 @@ class KalturaSubTenantModel:
             
         except Exception as error:
             print(f"❌ Error creating publishing category: {error}")
-            raise error
+            raise error 
 
     def check_kaf_instance_ready(self) -> bool:
         """
@@ -289,7 +304,7 @@ class KalturaSubTenantModel:
             print(f"✅ Using existing KS for partner {self.partner_id}")
             
             # Call the automation endpoint
-            kaf_url = f"https://{self.partner_id}.kaf.kaltura.com/staffbasekmeautosetup/index/config/automate-embedded-rooms-setup"
+            kaf_url = f"https://{self.partner_id}.kaf.kaltura.com/staffbasekmeautosetup/config/automate-embedded-rooms-setup"
             
             headers = {
                 'X-Kaltura-Session': ks,

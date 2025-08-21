@@ -481,7 +481,7 @@ class KalturaService:
                 # Use the sub-tenant model to check KAF readiness
                 start_time = time.time()
                 max_wait_time = 100      
-                check_interval = 1    # 10 second
+                check_interval = 30    # 10 second
                 attempts = 0
                 
                 while True:
@@ -595,7 +595,7 @@ class KalturaService:
         try:
             partner_id = data.get('partnerId')
             max_wait_time = data.get('maxWaitTime', 300)  # Default 5 minutes
-            check_interval = data.get('checkInterval', 5)  # Default 5 seconds
+            check_interval = data.get('checkInterval', 10)  # Default 5 seconds
             
             if not partner_id:
                 return jsonify({'success': False, 'message': 'Missing required parameter: partnerId'}), 400
