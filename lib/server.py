@@ -21,8 +21,14 @@ from flask import Flask, send_from_directory
 import os
 from .routes import api_bp
 
+# Enable KalturaClient logging before any clients are created
+from .kaltura_integration.logging_wrapper import enable_kaltura_logging
+
 def create_app():
     """Create and configure Flask application"""
+    # Enable KalturaClient logging for all future client instances
+    enable_kaltura_logging()
+    
     app = Flask(__name__, static_folder='../public', static_url_path='')
     
     # Register API blueprint
@@ -61,6 +67,7 @@ def main():
         print(f"📱 Entry Create KAF: http://localhost:{port}/entry-create-kaf")
         print(f"📱 Create Sub Tenant: http://localhost:{port}/create-sub-tenant")
         print(f"🔧 Debug Mode: {debug}")
+        print(f"📝 KalturaClient logging: ENABLED - All API requests/responses will be logged")
         
         app.run(
             host=host,

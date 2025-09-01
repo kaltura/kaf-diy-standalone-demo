@@ -100,8 +100,17 @@ KALTURA_PARENT_PARTNER_ID=your_parent_partner_id
 KALTURA_ADMIN_SECRET=your_admin_secret
 KALTURA_USER_ID=your_user_id
 
+# Partner Configuration
+KALTURA_PARTNER_NAME=your_partner_name
+KALTURA_PARTNER_EMAIL=admin@yourpartner.com
+KALTURA_PARTNER_DESCRIPTION=your_partner_description
+KALTURA_TEMPLATE_PARTNER_ID=your_template_partner_id
+
 # Template Room Entry ID for room creation
 TEMPLATE_ROOM_ENTRY_ID=your_template_room_entry_id
+
+# Customer Configuration
+CUSTOMER_NAME=YourCompanyName
 
 # Flask Configuration (optional, defaults shown)
 FLASK_HOST=0.0.0.0
@@ -113,17 +122,31 @@ FLASK_DEBUG=False
 
 **Option 1: Export in shell**
 ```bash
-export TEMPLATE_ROOM_ENTRY_ID=your_template_room_entry_id
 export KALTURA_URL=https://www.kaltura.com
-# ... other variables
+export KALTURA_PARENT_PARTNER_ID=your_parent_partner_id
+export KALTURA_ADMIN_SECRET=your_admin_secret
+export KALTURA_USER_ID=your_user_id
+export KALTURA_PARTNER_NAME="your_partner_name"
+export KALTURA_PARTNER_EMAIL=admin@yourpartner.com
+export KALTURA_PARTNER_DESCRIPTION="your_partner_description"
+export KALTURA_TEMPLATE_PARTNER_ID=your_template_partner_id
+export TEMPLATE_ROOM_ENTRY_ID=your_template_room_entry_id
+export CUSTOMER_NAME=YourCompanyName
 ```
 
 **Option 2: Create .env file**
 ```bash
 # Create .env file in project root
-echo "TEMPLATE_ROOM_ENTRY_ID=your_template_room_entry_id" > .env
-echo "KALTURA_URL=https://www.kaltura.com" >> .env
-# ... add other variables
+echo "KALTURA_URL=https://www.kaltura.com" > .env
+echo "KALTURA_PARENT_PARTNER_ID=your_parent_partner_id" >> .env
+echo "KALTURA_ADMIN_SECRET=your_admin_secret" >> .env
+echo "KALTURA_USER_ID=your_user_id" >> .env
+echo "KALTURA_PARTNER_NAME=your_partner_name" >> .env
+echo "KALTURA_PARTNER_EMAIL=admin@yourpartner.com" >> .env
+echo "KALTURA_PARTNER_DESCRIPTION=your_partner_description" >> .env
+echo "KALTURA_TEMPLATE_PARTNER_ID=your_template_partner_id" >> .env
+echo "TEMPLATE_ROOM_ENTRY_ID=your_template_room_entry_id" >> .env
+echo "CUSTOMER_NAME=YourCompanyName" >> .env
 ```
 
 **Option 3: Set in your IDE/terminal**
@@ -132,6 +155,12 @@ TEMPLATE_ROOM_ENTRY_ID=your_template_room_entry_id python run.py
 ```
 
 ## 🚀 Usage
+
+### Quick Setup
+Run the interactive setup script to configure your environment:
+```bash
+python setup_env.py
+```
 
 1. **Start the server**
    ```bash
@@ -156,6 +185,21 @@ TEMPLATE_ROOM_ENTRY_ID=your_template_room_entry_id python run.py
 
 
 ## 🔧 Configuration
+
+### Customer Name Configuration
+The application uses a configurable customer name for category hierarchy. Set this via environment variable:
+
+```bash
+# Set customer name (defaults to "customer_name" if not set)
+export CUSTOMER_NAME=YourCompanyName
+
+# Or in .env file
+CUSTOMER_NAME=YourCompanyName
+```
+
+This value is used to create the category hierarchy: `{CUSTOMER_NAME}>site>channels`
+
+**Note**: If no `CUSTOMER_NAME` is set, the system will default to "customer_name" as the category hierarchy.
 
 ### Credential Management
 - **No Environment Variables**: All configuration via frontend forms
@@ -218,7 +262,7 @@ The `KalturaSubTenantModel` class handles all sub-tenant operations:
 - **Partner Registration**: Uses `partner->register` API with proper module configuration
 - **Module Management**: Automatically enables required KAF modules via `additionalParams`
 - **KAF Instance Monitoring**: Checks instance readiness with retry logic
-- **Automated Setup**: Calls the embedded rooms automation endpoint
+
 
 #### Service Layer (`lib/services/kaltura_service.py`)
 The `KalturaService.create_sub_tenant()` method orchestrates the entire process:
@@ -258,17 +302,13 @@ Instead of manual curl commands, the system automatically monitors KAF instance 
 
 **Intelligent Polling**: See `lib/services/kaltura_service.py` lines 480-520 for the service layer implementation with configurable timeouts and retry logic.
 
-### Automated Embedded Rooms Setup
 
-Once the KAF instance is ready, the system automatically calls the setup endpoint:
-
-**Automation Method**: See `lib/models/sub_tenant_model.py` lines 320-350 for the `automate_embedded_rooms_setup()` method that replaces manual curl calls to the staffbasekmeautosetup endpoint.
 
 ### Publishing Category Creation
 
 The system automatically creates a publishing category under the standard hierarchy:
 
-**Category Creation**: See `lib/models/sub_tenant_model.py` lines 200-250 for the `create_publishing_category()` method that automatically locates the "MediaSpace>site>channels" parent and creates the publishing category.
+**Category Creation**: See `lib/models/sub_tenant_model.py` lines 200-250 for the `create_publishing_category()` method that automatically locates the customer category hierarchy parent and creates the publishing category.
 
 ### Usage Example
 
@@ -276,9 +316,8 @@ To create a sub-tenant, simply navigate to the Create Sub Tenant page and click 
 
 1. **Create Partner**: Register new partner with all required modules
 2. **Monitor KAF**: Wait for KAF instance to become ready
-3. **Create Category**: Set up publishing category under MediaSpace>site>channels
-4. **Run Automation**: Execute embedded rooms setup automation
-5. **Store Credentials**: Save all credentials to localStorage for other pages
+3. **Create Category**: Set up publishing category under the customer category hierarchy
+4. **Store Credentials**: Save all credentials to localStorage for other pages
 
 ### Environment Variables Required
 
@@ -289,8 +328,8 @@ KALTURA_ADMIN_SECRET=your_admin_secret
 KALTURA_USER_ID=your_user_id
 KALTURA_URL=https://www.kaltura.com
 KALTURA_TEMPLATE_PARTNER_ID=your_template_partner_id
-KALTURA_PARTNER_NAME=your_new_partner_name
-KALTURA_PARTNER_EMAIL=admin@yournewpartner.com
+KALTURA_PARTNER_NAME=your_partner_name
+KALTURA_PARTNER_EMAIL=admin@yourpartner.com
 KALTURA_PARTNER_DESCRIPTION=your_partner_description
 ```
 

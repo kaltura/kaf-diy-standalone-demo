@@ -13,7 +13,7 @@ class KalturaService:
     # Configuration constants
     DEFAULT_SESSION_DURATION = 3600  # 1 hour in seconds
     DEFAULT_KAF_MAX_WAIT_TIME = 100  # Maximum wait time for KAF readiness in seconds
-    DEFAULT_KAF_CHECK_INTERVAL = 60  # Interval between KAF readiness checks in seconds
+    DEFAULT_KAF_CHECK_INTERVAL = 30  # Interval between KAF readiness checks in seconds
     DEFAULT_KAF_READINESS_MAX_WAIT = 300  # Default max wait time for KAF readiness endpoint
     DEFAULT_KAF_READINESS_CHECK_INTERVAL = 10  # Default check interval for KAF readiness endpoint
     
@@ -497,22 +497,9 @@ class KalturaService:
                         print(f"✅ KAF instance is ready!")
                         print(f"🎉 Total time: {elapsed_time:.1f} seconds, Total attempts: {attempts}")
                         
-                        # Automate embedded rooms setup now that KAF is ready
-                        try:
-
-                             # Create the publishing category using the new sub-tenant's credentials
-                            category_data = new_sub_tenant_model.create_publishing_category()
-                            print(f"✅ Publishing category created: {category_data}")
-
-                            print("🔧 Starting embedded rooms automation setup...")
-                            automation_result = new_sub_tenant_model.automate_embedded_rooms_setup()
-                            print(f"✅ Embedded rooms automation completed: {automation_result}")
-                            
-                           
-                            
-                        except Exception as automation_error:
-                            print(f"⚠️  Embedded rooms automation failed: {automation_error}")
-                            # Continue with the process even if automation fails
+                        # Create the publishing category using the new sub-tenant's credentials
+                        category_data = new_sub_tenant_model.create_publishing_category()
+                        print(f"✅ Publishing category created: {category_data}")
                         
                         kaf_status = {
                             'success': True,
@@ -565,7 +552,7 @@ class KalturaService:
 
     @staticmethod
     def create_publishing_category(data):
-        """Create a publishing category under MediaSpace>site>channels"""
+        """Create a publishing category under the configured customer name hierarchy"""
         try:
             # Use SubTenantModel for authentication and category creation
             # The create_publishing_category method automatically finds the parent category

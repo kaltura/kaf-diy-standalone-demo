@@ -4,6 +4,7 @@ Provides functionality for creating sub-tenants, managing categories, and partne
 """
 
 import time
+import os
 import requests
 import logging
 from typing import Optional, Dict, Any
@@ -115,7 +116,7 @@ class KalturaSubTenantModel:
         # Configure modules and features
         modules_to_enable = [
             "hosted", "theming", "newrow", "chatandcollaboration",
-            "embeddedrooms", "Meetingentry", "kaftestme", "kwebcast","staffbasekmeautosetup"
+            "embeddedrooms", "Meetingentry", "kaftestme", "kwebcast"
         ]
         
         partner.additionalParams = []
@@ -135,6 +136,11 @@ class KalturaSubTenantModel:
         partner.additionalParams.append(KalturaKeyValue())
         partner.additionalParams[-1].key = "theming.features.mediapage"
         partner.additionalParams[-1].value = "1"
+        
+        # Add customer partner type
+        partner.additionalParams.append(KalturaKeyValue())
+        partner.additionalParams[-1].key = "customPartnerType"
+        partner.additionalParams[-1].value = "kaf"
         
         return partner
     
@@ -184,7 +190,7 @@ class KalturaSubTenantModel:
     
     def create_publishing_category(self) -> Dict[str, Any]:
         """
-        Create a publishing category under MediaSpace>site>channels.
+        Create a publishing category under the configured customer name hierarchy.
         
         Returns:
             Dict[str, Any]: Created category information
@@ -193,9 +199,10 @@ class KalturaSubTenantModel:
             Exception: If category creation fails
         """
         try:
-            # Always attempt to locate the "MediaSpace>site>channels" category automatically
+            customer_name = os.environ.get('CUSTOMER_NAME', 'customer_name')
+            # Always attempt to locate the customer category hierarchy automatically
             try:
-                print("🔍 Searching for parent category 'MediaSpace>site>channels' ...")
+                print(f"🔍 Searching for parent category '{customer_name}>site>channels' ...")
 
                 # Retry logic: attempt to locate the parent category up to 3 times,
                 # pausing between attempts in case the category has not
@@ -203,7 +210,7 @@ class KalturaSubTenantModel:
                 max_attempts = self.DEFAULT_SEARCH_ATTEMPTS
                 for attempt in range(1, max_attempts + 1):
                     cat_filter = KalturaCategoryFilter()
-                    cat_filter.fullNameEqual = "MediaSpace>site>channels"
+                    cat_filter.fullNameEqual = f"{customer_name}>site>channels"
 
                     # No pager needed; passing None uses default server-side pagination
                     search_result = self.client.category.list(cat_filter, None)
@@ -217,7 +224,7 @@ class KalturaSubTenantModel:
                             print(f"⚠️ Parent category not found (attempt {attempt}/{max_attempts}). Waiting {self.DEFAULT_SEARCH_WAIT_TIME} seconds before retrying...")
                             time.sleep(self.DEFAULT_SEARCH_WAIT_TIME)
                         else:
-                            raise Exception("Parent category 'MediaSpace>site>channels' not found")
+                            raise Exception(f"Parent category '{customer_name}>site>channels' not found")
 
             except Exception as search_error:
                 print(f"❌ Error locating parent category: {search_error}")
@@ -287,52 +294,4 @@ class KalturaSubTenantModel:
             self.logger.error(f"❌ Unexpected error during KAF check: {str(e)}")
             return False 
 
-    def automate_embedded_rooms_setup(self) -> Dict[str, Any]:
-        """
-        Automate embedded rooms setup by calling the staffbasekmeautosetup endpoint.
-        
-        Returns:
-            Dict[str, Any]: Response from the automation endpoint
-            
-        Raises:
-            Exception: If automation setup fails
-        """
-        try:
-            print(f"🔧 Starting embedded rooms automation setup for partner {self.partner_id}")
-            
-            # Get the existing KS from the client initialized in __init__
-            ks = self.client.getKs()
-            
-            if not ks:
-                raise Exception('No Kaltura Session (KS) available from existing client')
-            
-            print(f"✅ Using existing KS for partner {self.partner_id}")
-            
-            # Call the automation endpoint
-            kaf_url = f"https://{self.partner_id}.kaf.kaltura.com/staffbasekmeautosetup/config/automate-embedded-rooms-setup"
-            
-            headers = {
-                'X-Kaltura-Session': ks,
-                'Content-Type': 'application/json'
-            }
-            
-            print(f"📡 Calling automation endpoint: {kaf_url}")
-            
-            response = requests.post(kaf_url, headers=headers, timeout=60)
-            
-            if response.status_code == 200:
-                print(f"✅ Embedded rooms automation setup completed successfully")
-                return {
-                    'success': True,
-                    'status_code': response.status_code,
-                    'response': response.text,
-                    'ks': ks
-                }
-            else:
-                error_msg = f"Automation endpoint returned HTTP {response.status_code}: {response.text}"
-                print(f"❌ {error_msg}")
-                raise Exception(error_msg)
-                
-        except Exception as error:
-            print(f"❌ Error during embedded rooms automation setup: {error}")
-            raise error 
+ 

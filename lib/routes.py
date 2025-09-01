@@ -78,7 +78,7 @@ def create_sub_tenant():
 
 @api_bp.route('/kaltura/create-publishing-category', methods=['POST'])
 def create_publishing_category():
-    """Create a publishing category under MediaSpace>site>channels"""
+    """Create a publishing category under the configured customer name hierarchy"""
     data = request.get_json()
     return KalturaService.create_publishing_category(data)
 
