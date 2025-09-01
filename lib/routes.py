@@ -4,6 +4,7 @@ import json
 import queue
 import threading
 import time
+import os
 
 # Create API blueprint
 api_bp = Blueprint('api', __name__)
@@ -77,6 +78,15 @@ def create_sub_tenant():
 
 @api_bp.route('/kaltura/create-publishing-category', methods=['POST'])
 def create_publishing_category():
-    """Create a publishing category under MediaSpace>site>channels"""
+    """Create a publishing category under the configured customer name hierarchy"""
     data = request.get_json()
-    return KalturaService.create_publishing_category(data) 
+    return KalturaService.create_publishing_category(data)
+
+@api_bp.route('/kaltura/env-info', methods=['GET'])
+def get_env_info():
+    """Get environment variables including parent PID and template PID"""
+    env_info = {
+        'kaltura_parent_partner_id': os.getenv('KALTURA_PARENT_PARTNER_ID', 'Not set'),
+        'kaltura_template_partner_id': os.getenv('KALTURA_TEMPLATE_PARTNER_ID', 'Not set'),
+    }
+    return jsonify(env_info) 

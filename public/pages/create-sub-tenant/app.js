@@ -13,6 +13,15 @@ async function createSubTenant() {
   resultEl.textContent = 'Initializing request...';
 
   try {
+    // Get environment variables for the message
+    const envResponse = await fetch(window.location.origin + '/api/kaltura/env-info');
+    const envData = await envResponse.json();
+    
+    const parentPid = envData.kaltura_parent_partner_id || 'Not set';
+    const templatePid = envData.kaltura_template_partner_id || 'Not set';
+    
+    resultEl.textContent = `Creating sub-tenant from parent PID ${parentPid} using Template PID ${templatePid}...\nSee logs in Server for progress`;
+
     // Create sub-tenant and publishing category in one call
     const { response, body } = await fetchHelper(
       window.location.origin + '/api/kaltura/create-sub-tenant',

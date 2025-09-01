@@ -4,6 +4,9 @@ Provides functionality for creating sub-tenants, managing categories, and partne
 """
 
 import time
+import os
+import requests
+import logging
 from typing import Optional, Dict, Any
 
 from KalturaClient.Plugins.Core import (
@@ -24,6 +27,12 @@ class KalturaSubTenantModel:
     - Partner configuration and module management
     """
     
+    # Configuration constants
+    DEFAULT_PAGE_SIZE = 500
+    DEFAULT_PAGE_INDEX = 1
+    DEFAULT_SEARCH_ATTEMPTS = 3
+    DEFAULT_SEARCH_WAIT_TIME = 10  # seconds
+    
     def __init__(self, partner_id: int, service_url: str, admin_secret: str, user_id: str):
         """
         Initialize the sub-tenant model with admin client.
@@ -39,6 +48,9 @@ class KalturaSubTenantModel:
         self.admin_secret = admin_secret
         self.user_id = user_id
         self.client = get_admin_client(partner_id, service_url, admin_secret, user_id)
+        
+        # Initialize logger for this instance
+        self.logger = logging.getLogger(__name__)
     
     def create_sub_tenant(
         self, 
@@ -125,6 +137,11 @@ class KalturaSubTenantModel:
         partner.additionalParams[-1].key = "theming.features.mediapage"
         partner.additionalParams[-1].value = "1"
         
+        # Add customer partner type
+        partner.additionalParams.append(KalturaKeyValue())
+        partner.additionalParams[-1].key = "customPartnerType"
+        partner.additionalParams[-1].value = "kaf"
+        
         return partner
     
     def list_categories(self) -> Dict[str, Any]:
@@ -140,8 +157,8 @@ class KalturaSubTenantModel:
         try:
             filter_obj = None  # No filter to get all categories
             pager = KalturaFilterPager()
-            pager.pageSize = 500  # Ensure we get all categories
-            pager.pageIndex = 1
+            pager.pageSize = self.DEFAULT_PAGE_SIZE  # Ensure we get all categories
+            pager.pageIndex = self.DEFAULT_PAGE_INDEX
             result = self.client.category.list(filter_obj, pager)
 
             if not result:
@@ -173,7 +190,7 @@ class KalturaSubTenantModel:
     
     def create_publishing_category(self) -> Dict[str, Any]:
         """
-        Create a publishing category under MediaSpace>site>channels.
+        Create a publishing category under the configured customer name hierarchy.
         
         Returns:
             Dict[str, Any]: Created category information
@@ -182,17 +199,18 @@ class KalturaSubTenantModel:
             Exception: If category creation fails
         """
         try:
-            # Always attempt to locate the "MediaSpace>site>channels" category automatically
+            customer_name = os.environ.get('CUSTOMER_NAME', 'customer_name')
+            # Always attempt to locate the customer category hierarchy automatically
             try:
-                print("🔍 Searching for parent category 'MediaSpace>site>channels' ...")
+                print(f"🔍 Searching for parent category '{customer_name}>site>channels' ...")
 
                 # Retry logic: attempt to locate the parent category up to 3 times,
-                # pausing 5 seconds between attempts in case the category has not
+                # pausing between attempts in case the category has not
                 # yet been created by the instance.
-                max_attempts = 3
+                max_attempts = self.DEFAULT_SEARCH_ATTEMPTS
                 for attempt in range(1, max_attempts + 1):
                     cat_filter = KalturaCategoryFilter()
-                    cat_filter.fullNameEqual = "MediaSpace>site>channels"
+                    cat_filter.fullNameEqual = f"{customer_name}>site>channels"
 
                     # No pager needed; passing None uses default server-side pagination
                     search_result = self.client.category.list(cat_filter, None)
@@ -203,10 +221,10 @@ class KalturaSubTenantModel:
                         break
                     else:
                         if attempt < max_attempts:
-                            print(f"⚠️ Parent category not found (attempt {attempt}/{max_attempts}). Waiting 5 seconds before retrying...")
-                            time.sleep(5)
+                            print(f"⚠️ Parent category not found (attempt {attempt}/{max_attempts}). Waiting {self.DEFAULT_SEARCH_WAIT_TIME} seconds before retrying...")
+                            time.sleep(self.DEFAULT_SEARCH_WAIT_TIME)
                         else:
-                            raise Exception("Parent category 'MediaSpace>site>channels' not found")
+                            raise Exception(f"Parent category '{customer_name}>site>channels' not found")
 
             except Exception as search_error:
                 print(f"❌ Error locating parent category: {search_error}")
@@ -237,3 +255,43 @@ class KalturaSubTenantModel:
         except Exception as error:
             print(f"❌ Error creating publishing category: {error}")
             raise error 
+
+    def check_kaf_instance_ready(self) -> bool:
+        """
+        Check if KAF instance is ready by calling the version endpoint.
+        
+        Returns:
+            bool: True if instance is ready (HTTP 200 + version), False otherwise
+            
+        Note:
+            This method performs a single check and returns immediately.
+            Use in a loop with delays for polling behavior.
+        """
+        try:
+            kaf_url = f"https://{self.partner_id}.kaf.kaltura.com/version"
+            
+            self.logger.info(f"🔍 Checking KAF instance readiness for partner {self.partner_id}")
+            self.logger.info(f"📡 Checking endpoint: {kaf_url}")
+            
+            response = requests.get(kaf_url, timeout=30)
+            
+            if response.status_code == 200:
+                version = response.text.strip()
+                self.logger.info(f"✅ KAF instance is ready! Version: {version}")
+                return True
+                
+            elif response.status_code == 500:
+                self.logger.info(f"⏳ KAF instance not ready yet (HTTP 500)")
+                return False
+            else:
+                self.logger.warning(f"⚠️  Unexpected HTTP status: {response.status_code}")
+                return False
+                
+        except requests.exceptions.RequestException as e:
+            self.logger.warning(f"⚠️  Request failed: {str(e)}")
+            return False
+        except Exception as e:
+            self.logger.error(f"❌ Unexpected error during KAF check: {str(e)}")
+            return False 
+
+ 

@@ -1,15 +1,21 @@
-from flask import jsonify, request
+from flask import jsonify
 from typing import Optional, Dict, Any
 from ..models.live_event_model import KalturaLiveEventModel
 from ..models.room_model import KalturaRoomModel
 from ..models.sub_tenant_model import KalturaSubTenantModel
 from ..kaltura_integration.simple_client import get_user_client
 import time
-import json
 import os
 
 class KalturaService:
     """Kaltura service for handling API operations using Service Layer pattern"""
+    
+    # Configuration constants
+    DEFAULT_SESSION_DURATION = 3600  # 1 hour in seconds
+    DEFAULT_KAF_MAX_WAIT_TIME = 100  # Maximum wait time for KAF readiness in seconds
+    DEFAULT_KAF_CHECK_INTERVAL = 30  # Interval between KAF readiness checks in seconds
+    DEFAULT_KAF_READINESS_MAX_WAIT = 300  # Default max wait time for KAF readiness endpoint
+    DEFAULT_KAF_READINESS_CHECK_INTERVAL = 10  # Default check interval for KAF readiness endpoint
     
     def __init__(self, partner_id: int, kaltura_url: str, admin_secret: str, user_id: str):
         """
@@ -25,34 +31,29 @@ class KalturaService:
         self.room_model = KalturaRoomModel(partner_id, kaltura_url, admin_secret, user_id)
     
     @classmethod
-    def from_request_data(cls, data):
+    def from_request_data(cls, data: Dict[str, Any]):
         """Create KalturaService instance from request data with validation"""
-        partner_id = data.get('partnerId')
-        kaltura_url = data.get('kalturaUrl')
-        admin_secret = data.get('adminSecret')
-        user_id = data.get('userId')
-        
-        if not partner_id or not kaltura_url or not admin_secret or not user_id:
-            raise ValueError('Missing required Kaltura credentials (partnerId, kalturaUrl, adminSecret, userId).')
-        
-        return cls(int(partner_id), kaltura_url, admin_secret, user_id)
+        cls._validate_credentials(data)
+        return cls(int(data['partnerId']), data['kalturaUrl'], data['adminSecret'], data['userId'])
 
     @staticmethod
-    def _create_sub_tenant_model(data):
+    def _validate_credentials(data: Dict[str, Any]) -> None:
+        """Validate required Kaltura credentials in request data"""
+        required_fields = ['partnerId', 'kalturaUrl', 'adminSecret', 'userId']
+        missing_fields = [field for field in required_fields if not data.get(field)]
+        
+        if missing_fields:
+            raise ValueError(f'Missing required Kaltura credentials: {", ".join(missing_fields)}')
+
+    @staticmethod
+    def _create_sub_tenant_model(data: Dict[str, Any]) -> KalturaSubTenantModel:
         """Create KalturaSubTenantModel instance from request data with validation"""
-        partner_id = data.get('partnerId')
-        kaltura_url = data.get('kalturaUrl')
-        admin_secret = data.get('adminSecret')
-        user_id = data.get('userId')
-        
-        if not partner_id or not kaltura_url or not admin_secret or not user_id:
-            raise ValueError('Missing required Kaltura credentials (partnerId, kalturaUrl, adminSecret, userId).')
-        
+        KalturaService._validate_credentials(data)
         return KalturaSubTenantModel(
-            int(partner_id),
-            kaltura_url,
-            admin_secret,
-            user_id
+            int(data['partnerId']),
+            data['kalturaUrl'],
+            data['adminSecret'],
+            data['userId']
         )
 
     @staticmethod
@@ -120,13 +121,7 @@ class KalturaService:
             privileges_str = ",".join(privileges_parts)
 
             # Generate user KS using simple client
-           
-            if not partner_id or not kaltura_url or not admin_secret:
-                return jsonify({
-                    'success': False,
-                    'message': 'Missing required Kaltura credentials (partnerId, kalturaUrl, adminSecret).'
-                }), 400
-            client = get_user_client(int(partner_id), kaltura_url, admin_secret, user_id or "anonymous", privileges_str, 3600)
+            client = get_user_client(int(partner_id), kaltura_url, admin_secret, user_id or "anonymous", privileges_str, KalturaService.DEFAULT_SESSION_DURATION)
             ks = client.getKs()  # Get the KS from the client
 
             return jsonify({
@@ -192,7 +187,7 @@ class KalturaService:
             print(f'Error creating room: {error}')
             return jsonify({
                 'success': False,
-                'message': str(error) or 'Failed to create room'
+                'message': str(error)
             }), 500
 
     @staticmethod
@@ -251,7 +246,7 @@ class KalturaService:
             print(f'❌ Error creating room with live entry: {error}')
             return jsonify({
                 'success': False,
-                'message': str(error) or 'Failed to create room with live entry'
+                'message': str(error)
             }), 500
     
 
@@ -327,7 +322,7 @@ class KalturaService:
             print(f'Error creating live session: {error}')
             return jsonify({
                 'success': False,
-                'message': str(error) or 'Failed to create live session'
+                'message': str(error)
             }), 500
     
     def _create_diy_orchestration(
@@ -473,13 +468,76 @@ class KalturaService:
             }
             new_sub_tenant_model = KalturaService._create_sub_tenant_model(new_tenant_data)
             
-            # Create the publishing category using the new sub-tenant's credentials
-            category_data = new_sub_tenant_model.create_publishing_category()
+            # Check if KAF instance is ready using the sub-tenant model
+            kaf_status = None
+            category_data = None  # Initialize category_data variable
+            try:
+                print("🔍 Checking if KAF instance is ready...")
+                
+                # Use the sub-tenant model to check KAF readiness
+                start_time = time.time()
+                max_wait_time = KalturaService.DEFAULT_KAF_MAX_WAIT_TIME      
+                check_interval = KalturaService.DEFAULT_KAF_CHECK_INTERVAL
+                attempts = 0
+                
+                # Wait for initial delay to ensure KAF instance has time to be created
+                print(f"⏳ Waiting {check_interval} seconds before first check to ensure KAF instance creation...")
+                time.sleep(check_interval)
+                
+                while True:
+                    attempts += 1
+                    elapsed_time = time.time() - start_time
+                    
+                    print(f"🔄 Attempt {attempts}: Checking KAF instance (elapsed: {elapsed_time:.1f}s)")
+                    
+                    # Check if KAF instance is ready
+                    is_ready = new_sub_tenant_model.check_kaf_instance_ready()
+                    
+                    if is_ready:
+                        print(f"✅ KAF instance is ready!")
+                        print(f"🎉 Total time: {elapsed_time:.1f} seconds, Total attempts: {attempts}")
+                        
+                        # Create the publishing category using the new sub-tenant's credentials
+                        category_data = new_sub_tenant_model.create_publishing_category()
+                        print(f"✅ Publishing category created: {category_data}")
+                        
+                        kaf_status = {
+                            'success': True,
+                            'partner_id': int(new_partner_id),
+                            'version': 'Ready',
+                            'total_time_seconds': elapsed_time,
+                            'total_attempts': attempts,
+                            'kaf_url': f"https://{new_partner_id}.kaf.kaltura.com/version"
+                        }
+                        break
+                    
+                    else:
+                        print(f"⏳ KAF instance not ready yet - attempt {attempts}")
+                        
+                        # Check if we've exceeded max wait time
+                        if elapsed_time >= max_wait_time:
+                            error_msg = f"KAF instance not ready after {max_wait_time} seconds ({attempts} attempts)"
+                            print(f"❌ {error_msg}")
+                            raise Exception(error_msg)
+                        
+                        # Wait before next check
+                        if elapsed_time + check_interval < max_wait_time:
+                            print(f"⏳ Waiting {check_interval} seconds before next check...")
+                            time.sleep(check_interval)
+                        else:
+                            # Don't sleep if we're about to hit max wait time
+                            break
+                            
+            except Exception as kaf_error:
+                print(f"⚠️  KAF instance readiness check failed: {kaf_error}")
+                print("💡 You can manually check later using the check_kaf_instance_ready method")
+                kaf_status = {'success': False, 'error': str(kaf_error)}
             
             return jsonify({
                 'success': True,
                 'result': tenant_response,
-                'category': category_data
+                'category': category_data,
+                'kaf_status': kaf_status
             }), 200
         except ValueError as ve:
             return jsonify({'success': False, 'message': str(ve)}), 400
@@ -487,18 +545,21 @@ class KalturaService:
             print(f'Error creating sub-tenant and category: {error}')
             return jsonify({
                 'success': False,
-                'message': str(error) or 'Failed to create sub-tenant and category'
+                'message': str(error)
             }), 500
 
 
 
     @staticmethod
     def create_publishing_category(data):
-        """Create a publishing category under MediaSpace>site>channels"""
+        """Create a publishing category under the configured customer name hierarchy"""
         try:
             # Use SubTenantModel for authentication and category creation
             # The create_publishing_category method automatically finds the parent category
             sub_tenant_model = KalturaService._create_sub_tenant_model(data)
+
+
+            
             category_data = sub_tenant_model.create_publishing_category()
 
             return jsonify({
@@ -512,5 +573,89 @@ class KalturaService:
             print(f'Error creating publishing category: {error}')
             return jsonify({
                 'success': False,
-                'message': str(error) or 'Failed to create publishing category'
+                'message': str(error)
+            }), 500
+
+    @staticmethod
+    def check_kaf_readiness_endpoint(data):
+        """Standalone endpoint to check KAF instance readiness"""
+        try:
+            partner_id = data.get('partnerId')
+            max_wait_time = data.get('maxWaitTime', KalturaService.DEFAULT_KAF_READINESS_MAX_WAIT)
+            check_interval = data.get('checkInterval', KalturaService.DEFAULT_KAF_READINESS_CHECK_INTERVAL)
+            
+            if not partner_id:
+                return jsonify({'success': False, 'message': 'Missing required parameter: partnerId'}), 400
+            
+            try:
+                partner_id_int = int(partner_id)
+            except ValueError:
+                return jsonify({'success': False, 'message': 'Invalid partnerId: must be a number'}), 400
+            
+            # Create a temporary sub-tenant model for checking
+            temp_data = {
+                'partnerId': str(partner_id_int),
+                'kalturaUrl': 'https://www.kaltura.com',  # Dummy URL
+                'adminSecret': 'dummy',  # Dummy secret
+                'userId': 'dummy'  # Dummy user ID
+            }
+            
+            temp_sub_tenant_model = KalturaService._create_sub_tenant_model(temp_data)
+            
+            # Check KAF instance readiness using the sub-tenant model
+            start_time = time.time()
+            attempts = 0
+            
+            while True:
+                attempts += 1
+                elapsed_time = time.time() - start_time
+                
+                print(f"🔄 Attempt {attempts}: Checking KAF instance (elapsed: {elapsed_time:.1f}s)")
+                
+                # Check if KAF instance is ready
+                is_ready = temp_sub_tenant_model.check_kaf_instance_ready()
+                
+                if is_ready:
+                    print(f"✅ KAF instance is ready!")
+                    print(f"🎉 Total time: {elapsed_time:.1f} seconds, Total attempts: {attempts}")
+                    
+                    kaf_status = {
+                        'success': True,
+                        'partner_id': partner_id_int,
+                        'version': 'Ready',
+                        'total_time_seconds': elapsed_time,
+                        'total_attempts': attempts,
+                        'kaf_url': f"https://{partner_id_int}.kaf.kaltura.com/version"
+                    }
+                    break
+                
+                else:
+                    print(f"⏳ KAF instance not ready yet - attempt {attempts}")
+                    
+                    # Check if we've exceeded max wait time
+                    if elapsed_time >= max_wait_time:
+                        error_msg = f"KAF instance not ready after {max_wait_time} seconds ({attempts} attempts)"
+                        print(f"❌ {error_msg}")
+                        raise Exception(error_msg)
+                    
+                    # Wait before next check
+                    if elapsed_time + check_interval < max_wait_time:
+                        print(f"⏳ Waiting {check_interval} seconds before next check...")
+                        time.sleep(check_interval)
+                    else:
+                        # Don't sleep if we're about to hit max wait time
+                        break
+            
+            return jsonify({
+                'success': True,
+                'kaf_status': kaf_status
+            }), 200
+            
+        except ValueError as ve:
+            return jsonify({'success': False, 'message': str(ve)}), 400
+        except Exception as error:
+            print(f'Error checking KAF instance readiness: {error}')
+            return jsonify({
+                'success': False,
+                'message': str(error)
             }), 500 

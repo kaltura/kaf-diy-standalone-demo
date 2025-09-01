@@ -127,6 +127,9 @@ ENV/
 env.bak/
 venv.bak/
 
+# Setup scripts (user-specific)
+setup_env.py
+
 # Spyder project settings
 .spyderproject
 .spyproject

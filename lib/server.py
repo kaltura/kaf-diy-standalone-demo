@@ -6,6 +6,13 @@ Run this script to start the Flask application
 
 import sys
 import os
+from dotenv import load_dotenv
+
+# Load environment variables from .env file
+script_dir = os.path.dirname(os.path.abspath(__file__))
+project_root = os.path.dirname(script_dir)
+env_path = os.path.join(project_root, '.env')
+load_dotenv(env_path)
 
 # Add the lib directory to the Python path
 sys.path.insert(0, os.path.join(os.path.dirname(__file__), 'lib'))
@@ -14,8 +21,14 @@ from flask import Flask, send_from_directory
 import os
 from .routes import api_bp
 
+# Enable KalturaClient logging before any clients are created
+from .kaltura_integration.logging_wrapper import enable_kaltura_logging
+
 def create_app():
     """Create and configure Flask application"""
+    # Enable KalturaClient logging for all future client instances
+    enable_kaltura_logging()
+    
     app = Flask(__name__, static_folder='../public', static_url_path='')
     
     # Register API blueprint
@@ -54,6 +67,7 @@ def main():
         print(f"📱 Entry Create KAF: http://localhost:{port}/entry-create-kaf")
         print(f"📱 Create Sub Tenant: http://localhost:{port}/create-sub-tenant")
         print(f"🔧 Debug Mode: {debug}")
+        print(f"📝 KalturaClient logging: ENABLED - All API requests/responses will be logged")
         
         app.run(
             host=host,
