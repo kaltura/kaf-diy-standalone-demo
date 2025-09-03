@@ -80,7 +80,7 @@ kaf-standalone-demo/
 ## 🎥 Use Case 1: DIY Live Sessions (`/entry-diy`)
 
 ### Purpose
-Create interactive DIY (Do-It-Yourself) live sessions that combine room creation with live entry generation.
+Create interactive DIY (Do-It-Yourself) live sessions that combine Studio (room) creation with live entry generation.
 
 ### Key Features
 - **Combined Creation**: Creates both a room AND a live entry in one operation
@@ -124,7 +124,6 @@ Create traditional live streaming events without interactive room features.
 - **Live Event Creation**: Creates only live stream entries (no rooms)
 - **Player Integration**: Load video player inline for viewing
 - **Session Management**: Generate secure sessions for video playback
-- **Simplified Workflow**: Focused on one-way live streaming
 - **No Environment Variables**: Works entirely with localStorage credentials
 
 ### Environment Variables Required
@@ -152,7 +151,7 @@ Create traditional live streaming events without interactive room features.
 ## 🎮 Use Case 3: Interactive Rooms (`/entry-interactive`)
 
 ### Purpose
-Create pure interactive rooms for collaborative sessions without live streaming.
+Create pure interactive rooms for collaborative sessions based on web-rtc
 
 ### Key Features
 - **Room-Only Creation**: Creates only interactive rooms (no live entries)
@@ -248,7 +247,7 @@ CUSTOMER_NAME=YourCompanyName
 - `tenantId`: PID
 - `tenantEmail`: Admin user email
 - `adminSecret`: Admin secret
-- `publishingCategoryId`: Default category for entries
+- `publishingCategoryId`: Default category for entries (only for live entries)
 - `kalturaUrl`: Service URL
 
 ---
@@ -289,14 +288,6 @@ This project is a comprehensive port and enhancement of the original Kaltura KAF
 
 ---
 
-## 🤝 Contributing
-
-1. Fork the repository
-2. Create a feature branch (`git checkout -b feature/enhancement`)
-3. Test thoroughly with your Kaltura PID
-4. Submit a pull request with detailed description
-
----
 
 ## 🆘 Support
 
