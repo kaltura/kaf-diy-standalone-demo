@@ -1,36 +1,17 @@
-# KAF Standalone Demo - Developer Guide
+# KAF Standalone Demo - Multi-Page Developer Guide
 
-A comprehensive Python code sample demonstrating how to implement Kaltura's DIY (Do-It-Yourself) live session functionality. This developer guide provides working code examples for creating and managing Kaltura entries, rooms, and sub-tenants using the Kaltura Application Framework (KAF).
+A comprehensive Python code sample demonstrating how to implement Kaltura's various live session functionalities. This developer guide provides working code examples for creating and managing Kaltura entries, rooms, PIDs, and different types of live events using the Kaltura Application Framework (KAF).
 
 ## 🎯 Purpose
 
-This project serves as a **reference implementation** for developers who want to integrate Kaltura's DIY live streaming capabilities into their own platforms. It demonstrates:
+This project serves as a **reference implementation** for developers who want to integrate different Kaltura live streaming capabilities into their own platforms. It demonstrates:
 
-- **Live Stream Creation**: How to programmatically create Kwebcast live entries
-- **Room Management**: How to create and configure embedded rooms
-- **Session Generation**: How to generate secure Kaltura sessions for users
-- **Sub-tenant Provisioning**: How to set up new Kaltura partners with required modules
-- **API Integration Patterns**: Best practices for integrating with Kaltura's REST APIs
-
-## 🚀 Key Features for Developers
-
-### 🎥 DIY Live Session Implementation
-- **Live Entry Creation**: Complete code sample for creating Kwebcast live streams
-- **Metadata Management**: Automatic attachment of KwebcastProfile metadata
-- **DVR Configuration**: Programmatic setup of recording and playback options
-- **Category Publishing**: Integration with Kaltura for entitlments
-
-### 🏢 Sub-tenant Management
-- **Partner Provisioning**: Full code example for creating new Kaltura partners
-- **Module Configuration**: Pre-configured with essential KAF modules
-- **Category Hierarchy**: Automatic creation of publishing categories
-- **Template Support**: Reusable partner and room templates
-
-### 🎛️ API Integration Examples
-- **Service Layer Pattern**: Clean separation of concerns with dedicated models
-- **Error Handling**: Comprehensive error management and logging
+- **DIY Live Sessions**: Interactive room creation with live entry generation
+- **Webcast Events**: Traditional live streaming without interactive features
+- **Interactive Rooms**: Pure room creation for collaborative sessions
+- **PID Provisioning**: Automated partner setup with required modules
 - **Session Management**: Secure token generation for embedded components
-- **Real-time Feedback**: Progress tracking and status updates
+- **API Integration Patterns**: Best practices for integrating with Kaltura's REST APIs
 
 ## 📁 Project Structure
 
@@ -38,12 +19,12 @@ This project serves as a **reference implementation** for developers who want to
 kaf-standalone-demo/
 ├── lib/
 │   ├── server.py                 # Flask application with route serving
-│   ├── routes.py                 # API route definitions (7 endpoints)
+│   ├── routes.py                 # API route definitions
 │   ├── models/
 │   │   ├── base_model.py         # Base model with shared functionality
 │   │   ├── live_event_model.py   # Live stream operations
 │   │   ├── room_model.py         # Room creation operations
-│   │   └── sub_tenant_model.py   # Sub-tenant and category management
+│   │   └── sub_tenant_model.py   # PID and category management
 │   ├── services/
 │   │   └── kaltura_service.py    # Service layer for API operations
 │   └── kaltura_integration/
@@ -54,19 +35,14 @@ kaf-standalone-demo/
 │   ├── app.css                   # Global styles
 │   ├── en.json                   # Localization data
 │   └── pages/
-│       ├── entry-create-kaf/     # Enhanced entry creation interface
-│       │   ├── index.html        # 3-column responsive layout
-│       │   ├── app.js            # Advanced form handling & player integration
-│       │   └── app.css           # Custom styling (500+ lines)
-│       └── create-sub-tenant/    # Sub-tenant creation interface
-│           ├── index.html        # Multi-step creation form
-│           └── app.js            # Automated tenant setup workflow
+│       ├── create-sub-tenant/    # PID creation interface
+│       ├── entry-diy/            # DIY live session creation
+│       ├── entry-webcast/        # Webcast event creation
+│       └── entry-interactive/    # Interactive room creation
 ├── requirements.txt              # Python dependencies
 ├── run.py                        # Application entry point
-├── list_metadata_profiles.py     # Utility for metadata profile discovery
 └── README.md                     # This documentation
 ```
-
 
 ## 🛠️ Installation
 
@@ -87,11 +63,33 @@ kaf-standalone-demo/
    pip install -r requirements.txt
    ```
 
-## ⚙️ Environment Variables
+4. **Start the server**
+   ```bash
+   python run.py
+   ```
 
-The application requires several environment variables to be set for proper operation:
+5. **Access the application**
+   - **Main Navigation**: http://localhost:3033/ (navigation hub)
+   - **Create Sub-Tenant**: http://localhost:3033/create-sub-tenant
+   - **DIY Live Sessions**: http://localhost:3033/entry-diy
+   - **Webcast Events**: http://localhost:3033/entry-webcast
+   - **Interactive Rooms**: http://localhost:3033/entry-interactive
 
-### Required Environment Variables
+---
+
+## 🏢 Use Case 1: Sub-Tenant Creation (`/create-sub-tenant`)
+
+### Purpose
+Automated creation of new Kaltura partners with pre-configured KAF modules and publishing categories.
+
+### Key Features
+- **One-Click Partner Creation**: Automated workflow with no manual input required
+- **KAF Module Configuration**: Pre-configured with all required KAF modules
+- **Category Hierarchy Setup**: Automatic creation of publishing categories
+- **Credential Management**: Automatic localStorage population for cross-page usage
+- **Real-time Progress Tracking**: Server-Sent Events for operation status
+
+### Environment Variables Required
 
 ```bash
 # Kaltura Configuration
@@ -106,241 +104,154 @@ KALTURA_PARTNER_EMAIL=admin@yourpartner.com
 KALTURA_PARTNER_DESCRIPTION=your_partner_description
 KALTURA_TEMPLATE_PARTNER_ID=your_template_partner_id
 
-# Template Room Entry ID for room creation
-TEMPLATE_ROOM_ENTRY_ID=your_template_room_entry_id
-
 # Customer Configuration
 CUSTOMER_NAME=YourCompanyName
-
-# Flask Configuration (optional, defaults shown)
-FLASK_HOST=0.0.0.0
-FLASK_PORT=3033
-FLASK_DEBUG=False
 ```
 
-### Setting Environment Variables
+### Workflow
+1. **Create Partner**: Register new partner with all required modules
+2. **Monitor KAF**: Wait for KAF instance to become ready
+3. **Create Category**: Set up publishing category under customer hierarchy
+4. **Store Credentials**: Save all credentials to localStorage for other pages
 
-**Option 1: Export in shell**
+### API Endpoints
+- `POST /api/kaltura/create-sub-tenant`: Complete PID creation workflow
+- `POST /api/kaltura/create-publishing-category`: Category management
+- `GET /api/kaltura/progress-stream`: Real-time progress updates
+
+---
+
+## 🎥 Use Case 2: DIY Live Sessions (`/entry-diy`)
+
+### Purpose
+Create interactive DIY (Do-It-Yourself) live sessions that combine room creation with live entry generation.
+
+### Key Features
+- **Combined Creation**: Creates both a room AND a live entry in one operation
+- **Studio Mode**: Open Kaltura room in new window for interactive sessions
+- **Player Mode**: Load video player inline for viewing
+- **Session Management**: Generate secure Kaltura sessions with custom parameters
+- **Real-time Logging**: Comprehensive operation tracking
+
+### Environment Variables Required
+
 ```bash
-export KALTURA_URL=https://www.kaltura.com
-export KALTURA_PARENT_PARTNER_ID=your_parent_partner_id
-export KALTURA_ADMIN_SECRET=your_admin_secret
-export KALTURA_USER_ID=your_user_id
-export KALTURA_PARTNER_NAME="your_partner_name"
-export KALTURA_PARTNER_EMAIL=admin@yourpartner.com
-export KALTURA_PARTNER_DESCRIPTION="your_partner_description"
-export KALTURA_TEMPLATE_PARTNER_ID=your_template_partner_id
-export TEMPLATE_ROOM_ENTRY_ID=your_template_room_entry_id
-export CUSTOMER_NAME=YourCompanyName
+# Template Configuration
+TEMPLATE_ROOM_ENTRY_ID=your_template_room_entry_id
 ```
 
-**Option 2: Create .env file**
+### Workflow
+1. **Create Room with Live Entry**: Generates both room and live stream entry
+2. **Session Generation**: Create secure sessions for Studio or Player modes
+3. **Studio Mode**: Opens interactive room in new window
+4. **Player Mode**: Loads video player inline for viewing
+
+### API Endpoints
+- `POST /api/kaltura/create-room-with-live`: Combined room and live entry creation
+- `POST /api/kaltura/generate-session`: Session generation for Studio/Player modes
+- `POST /api/kaltura/session-detail`: Fetch entry details
+
+### UI Features
+- **3-Column Layout**: Creation forms, video player, session controls
+- **Mode Toggle**: Switch between Studio and Player modes
+- **Real-time Logs**: Operation tracking with JSON display
+- **Credential Management**: localStorage integration
+
+---
+
+## 📺 Use Case 3: Webcast Events (`/entry-webcast`)
+
+### Purpose
+Create traditional live streaming events without interactive room features.
+
+### Key Features
+- **Live Event Creation**: Creates only live stream entries (no rooms)
+- **Player Integration**: Load video player inline for viewing
+- **Session Management**: Generate secure sessions for video playback
+- **Simplified Workflow**: Focused on one-way live streaming
+- **No Environment Variables**: Works entirely with localStorage credentials
+
+### Environment Variables Required
+
+**None required** - This use case works entirely with credentials stored in localStorage from the PID creation process.
+
+### Workflow
+1. **Create Live Event**: Generates only a live stream entry
+2. **Session Generation**: Create secure sessions for video playback
+3. **Player Loading**: Loads video player inline for viewing
+
+### API Endpoints
+- `POST /api/kaltura/add-live`: Live event creation only
+- `POST /api/kaltura/generate-session`: Session generation for video playback
+- `POST /api/kaltura/session-detail`: Fetch entry details
+
+### UI Features
+- **3-Column Layout**: Creation forms, video player, session controls
+- **Player Mode Only**: Focused on video playback
+- **Real-time Logs**: Operation tracking with JSON display
+- **Credential Management**: localStorage integration
+
+---
+
+## 🎮 Use Case 4: Interactive Rooms (`/entry-interactive`)
+
+### Purpose
+Create pure interactive rooms for collaborative sessions without live streaming.
+
+### Key Features
+- **Room-Only Creation**: Creates only interactive rooms (no live entries)
+- **Inline Room Loading**: Load interactive room directly in the page
+- **Session Management**: Generate secure sessions for room access
+- **Moderator Controls**: Chat and room moderation settings
+- **localStorage Credentials**: Uses credentials from PID creation process
+
+### Environment Variables Required
+
 ```bash
-# Create .env file in project root
-echo "KALTURA_URL=https://www.kaltura.com" > .env
-echo "KALTURA_PARENT_PARTNER_ID=your_parent_partner_id" >> .env
-echo "KALTURA_ADMIN_SECRET=your_admin_secret" >> .env
-echo "KALTURA_USER_ID=your_user_id" >> .env
-echo "KALTURA_PARTNER_NAME=your_partner_name" >> .env
-echo "KALTURA_PARTNER_EMAIL=admin@yourpartner.com" >> .env
-echo "KALTURA_PARTNER_DESCRIPTION=your_partner_description" >> .env
-echo "KALTURA_TEMPLATE_PARTNER_ID=your_template_partner_id" >> .env
-echo "TEMPLATE_ROOM_ENTRY_ID=your_template_room_entry_id" >> .env
-echo "CUSTOMER_NAME=YourCompanyName" >> .env
+# Template Configuration
+TEMPLATE_ROOM_ENTRY_ID=your_template_room_entry_id
 ```
 
-**Option 3: Set in your IDE/terminal**
-```bash
-TEMPLATE_ROOM_ENTRY_ID=your_template_room_entry_id python run.py
-```
+### Workflow
+1. **Create Room**: Generates only an interactive room
+2. **Session Generation**: Create secure sessions for room access
+3. **Inline Loading**: Loads interactive room directly in the page
 
-## 🚀 Usage
+### API Endpoints
+- `POST /api/kaltura/add-room`: Room creation only
+- `POST /api/kaltura/generate-session`: Session generation for room access
+- `POST /api/kaltura/session-detail`: Fetch room details
 
-### Quick Setup
-Run the interactive setup script to configure your environment:
-```bash
-python setup_env.py
-```
+### UI Features
+- **3-Column Layout**: Creation forms, room player, session controls
+- **Inline Room Loading**: Interactive room loads directly in the page
+- **Moderator Fields**: Chat and room moderation controls
+- **Real-time Logs**: Operation tracking with JSON display
+- **Credential Management**: localStorage integration
 
-1. **Start the server**
-   ```bash
-   python run.py
-   ```
-   Or alternatively:
-   ```bash
-   cd lib
-   python server.py
-   ```
-
-2. **Access the application**
-   - **Main Application**: http://localhost:3033/ (navigation hub)
-   - **Entry Create KAF**: http://localhost:3033/entry-create-kaf (primary interface)
-   - **Create Sub Tenant**: http://localhost:3033/create-sub-tenant (tenant management)
-
-3. **Initial Setup**
-   - Start with the **Create Sub Tenant** page to set up your Kaltura partner
-   - Credentials are automatically stored in localStorage for use across pages
-   - Use the **Entry Create KAF** page for content creation and management
-
-
+---
 
 ## 🔧 Configuration
 
-### Customer Name Configuration
-The application uses a configurable customer name for category hierarchy. Set this via environment variable:
+### Environment Variable Setup
 
-```bash
-# Set customer name (defaults to "customer_name" if not set)
-export CUSTOMER_NAME=YourCompanyName
+**Note**: Environment variables are only required for Sub-Tenant Creation, DIY, and Interactive Room use cases. The Webcast use case works entirely with localStorage credentials from the PID creation process.
 
-# Or in .env file
-CUSTOMER_NAME=YourCompanyName
-```
 
-This value is used to create the category hierarchy: `{CUSTOMER_NAME}>site>channels`
-
-**Note**: If no `CUSTOMER_NAME` is set, the system will default to "customer_name" as the category hierarchy.
 
 ### Credential Management
-- **No Environment Variables**: All configuration via frontend forms
 - **localStorage Persistence**: Credentials saved in browser for convenience
 - **Cross-Page Sync**: Automatic credential sharing between interfaces
 - **Real-time Updates**: Form changes immediately update localStorage
 
-### Required Credentials
-- **Partner ID**: Your Kaltura partner ID
-- **Admin Secret**: Partner admin secret
-- **User ID**: Admin user ID for operations
-- **Kaltura URL**: Service URL (default: https://www.kaltura.com)
-- **Template Partner ID**: For sub-tenant creation
-- **Template Room Entry ID**: For room creation in Studio mode
-
-### Local Storage Keys dont expose in UI! (for demo purpose only)
-- `tenantId`: Partner ID
+### Local Storage Keys (for demo purpose only)
+- `tenantId`: PID
 - `tenantEmail`: Admin user email
 - `adminSecret`: Admin secret
 - `publishingCategoryId`: Default category for entries
 - `kalturaUrl`: Service URL
 
-## 🎨 User Interface Guide
-
-### Entry Create KAF Interface
-
-#### Left Column - Creation Forms
-- **Creation Mode Toggle**: Switch between Broadcast (live entries) and Studio (rooms)
-- **Entry/Room Form**: Dynamic form adapting to selected mode
-- **Entry Details**: Fetch information for existing entries
-- **Activity Logs**: Real-time operation logging with JSON display
-
-#### Middle Column - Video Player
-- **Full-Screen Video**: Embedded Kaltura player/studio interface
-- **Responsive Design**: Adapts to different screen sizes
-- **Direct Integration**: Seamless loading of generated sessions
-
-#### Right Column - Session Controls
-- **Mode Toggle**: Switch between Studio (room creation) and Player (viewing)
-- **Session Generation**: Create Kaltura sessions with custom parameters
-- **Role Management**: Configure user roles and privileges
-- **LocalStorage Manager**: View and edit stored credentials
-
-### Create Sub Tenant Interface
-- **Step-by-Step Process**: Guided tenant creation workflow
-- **Automatic Setup**: Category creation and module configuration
-- **Progress Feedback**: Real-time status updates and error handling
-- **Credential Export**: Automatic localStorage population for other pages
-
-## 🔧 Sub-Tenant Creation Implementation
-
-### Overview
-The application provides a complete implementation for creating Kaltura sub-tenants with automatic module configuration and KAF instance setup. This replaces the need for manual API calls and curl commands.
-
-### Core Implementation Files
-
-#### Backend Models (`lib/models/sub_tenant_model.py`)
-The `KalturaSubTenantModel` class handles all sub-tenant operations:
-
-- **Partner Registration**: Uses `partner->register` API with proper module configuration
-- **Module Management**: Automatically enables required KAF modules via `additionalParams`
-- **KAF Instance Monitoring**: Checks instance readiness with retry logic
-
-
-#### Service Layer (`lib/services/kaltura_service.py`)
-The `KalturaService.create_sub_tenant()` method orchestrates the entire process:
-
-- **Environment Configuration**: Reads credentials from environment variables
-- **Multi-Step Workflow**: Creates tenant → waits for KAF → creates category → runs automation
-- **Progress Tracking**: Real-time updates via Server-Sent Events
-- **Error Handling**: Comprehensive error management with fallbacks
-
-#### API Endpoints (`lib/routes.py`)
-RESTful endpoints for sub-tenant operations:
-
-- `POST /api/kaltura/create-sub-tenant`: Complete tenant creation workflow
-- `POST /api/kaltura/create-publishing-category`: Category management
-- `GET /api/kaltura/progress-stream`: Real-time progress updates
-
-#### Frontend Interface (`public/pages/create-sub-tenant/`)
-User interface for triggering sub-tenant creation:
-
-- **Single-Click Creation**: Automated workflow with no manual input required
-- **Credential Storage**: Automatic localStorage population for cross-page usage
-- **Result Display**: JSON response formatting with success/error handling
-
-### Module Configuration
-
-The system automatically configures the following KAF modules during partner creation:
-
-**Module List**: See `lib/models/sub_tenant_model.py` lines 108-109 for the complete list of enabled modules.
-
-**Module Activation**: See `lib/models/sub_tenant_model.py` lines 115-125 for how modules are enabled via `additionalParams` with both the module list and individual enable flags.
-
-### KAF Instance Readiness Monitoring
-
-Instead of manual curl commands, the system automatically monitors KAF instance readiness:
-
-**Instance Check Method**: See `lib/models/sub_tenant_model.py` lines 280-300 for the `check_kaf_instance_ready()` method that replaces manual curl calls to the version endpoint.
-
-**Intelligent Polling**: See `lib/services/kaltura_service.py` lines 480-520 for the service layer implementation with configurable timeouts and retry logic.
-
-
-
-### Publishing Category Creation
-
-The system automatically creates a publishing category under the standard hierarchy:
-
-**Category Creation**: See `lib/models/sub_tenant_model.py` lines 200-250 for the `create_publishing_category()` method that automatically locates the customer category hierarchy parent and creates the publishing category.
-
-### Usage Example
-
-To create a sub-tenant, simply navigate to the Create Sub Tenant page and click the create button. The system will:
-
-1. **Create Partner**: Register new partner with all required modules
-2. **Monitor KAF**: Wait for KAF instance to become ready
-3. **Create Category**: Set up publishing category under the customer category hierarchy
-4. **Store Credentials**: Save all credentials to localStorage for other pages
-
-### Environment Variables Required
-
-```bash
-# Required for sub-tenant creation
-KALTURA_PARENT_PARTNER_ID=your_parent_partner_id
-KALTURA_ADMIN_SECRET=your_admin_secret
-KALTURA_USER_ID=your_user_id
-KALTURA_URL=https://www.kaltura.com
-KALTURA_TEMPLATE_PARTNER_ID=your_template_partner_id
-KALTURA_PARTNER_NAME=your_partner_name
-KALTURA_PARTNER_EMAIL=admin@yourpartner.com
-KALTURA_PARTNER_DESCRIPTION=your_partner_description
-```
-
-### Benefits Over Manual Implementation
-
-- **No Manual API Calls**: Complete automation of the entire workflow
-- **Built-in Retry Logic**: Intelligent polling for KAF instance readiness
-- **Progress Tracking**: Real-time updates via Server-Sent Events
-- **Error Handling**: Comprehensive error management with fallbacks
-- **Credential Management**: Automatic storage and sharing across interfaces
-- **Module Configuration**: Pre-configured with all required KAF modules
+---
 
 ## 📦 Dependencies
 
@@ -353,36 +264,45 @@ KalturaApiClient==21.19.0  # Official Kaltura Python client
 lxml==6.0.0               # XML processing for metadata
 ```
 
+---
+
 ## 🐛 Troubleshooting
 
 ### Common Issues
-1. **Session Creation Fails**: Verify admin secret and partner ID
+1. **Session Creation Fails**: Verify admin secret and PID
 2. **Room Creation Errors**: Ensure template room entry ID is valid
-3. **Metadata Issues**: Check if KwebcastProfile exists in your partner account
+3. **Metadata Issues**: Check if KwebcastProfile exists in your PID
 4. **CORS Errors**: Ensure proper Kaltura URL configuration
+5. **KAF Instance Not Ready**: Wait for KAF instance to become available
 
 ### Debug Tools
 - Browser Developer Tools for JavaScript debugging
 - Flask debug output in terminal
-- Real-time logs in the Entry Create KAF interface
+- Real-time logs in each interface
 - Network tab for API request/response inspection
+
+---
 
 ## 📄 License
 
 This project is a comprehensive port and enhancement of the original Kaltura KAF standalone demo. Please refer to Kaltura's licensing terms for usage restrictions.
 
+---
+
 ## 🤝 Contributing
 
 1. Fork the repository
 2. Create a feature branch (`git checkout -b feature/enhancement`)
-3. Test thoroughly with your Kaltura partner account
+3. Test thoroughly with your Kaltura PID
 4. Submit a pull request with detailed description
+
+---
 
 ## 🆘 Support
 
 For technical issues:
 - Check the real-time logs in the application interface
-- Verify Kaltura credentials and partner configuration
+- Verify Kaltura credentials and PID configuration
 - Consult Kaltura's official documentation for API-specific questions
 - Review browser console for JavaScript errors
 

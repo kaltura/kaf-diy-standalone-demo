@@ -517,7 +517,7 @@ function getTenantCredentials() {
     };
 }
 
-// Note: Credentials are managed through localStorage from the create-sub-tenant page
+// Note: Credentials are managed through localStorage from the PID creation page
 // No form fields for credentials exist on this page - they're accessed directly from localStorage
 
 /**
