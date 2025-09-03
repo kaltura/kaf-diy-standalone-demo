@@ -96,6 +96,8 @@ Create interactive DIY (Do-It-Yourself) live sessions that combine Studio (room)
 TEMPLATE_ROOM_ENTRY_ID=your_template_room_entry_id
 ```
 
+**Note:** This will define the configuration of the studio room. Please contact your Kaltura contact for this value.
+
 ### Workflow
 1. **Create Room with Live Entry**: Generates both room and live stream entry
 2. **Session Generation**: Create secure sessions for Studio or Player modes
@@ -166,6 +168,8 @@ Create pure interactive rooms for collaborative sessions based on web-rtc
 # Template Configuration
 TEMPLATE_ROOM_ENTRY_ID=your_template_room_entry_id
 ```
+
+**Note:** This will define the configuration of the room. Please contact your Kaltura contact for this value.
 
 ### Workflow
 1. **Create Room**: Generates only an interactive room
