@@ -77,7 +77,117 @@ kaf-standalone-demo/
 
 ---
 
-## 🏢 Use Case 1: Sub-Tenant Creation (`/create-sub-tenant`)
+## 🎥 Use Case 1: DIY Live Sessions (`/entry-diy`)
+
+### Purpose
+Create interactive DIY (Do-It-Yourself) live sessions that combine room creation with live entry generation.
+
+### Key Features
+- **Combined Creation**: Creates both a room AND a live entry in one operation
+- **Studio Mode**: Open Kaltura room in new window for interactive sessions
+- **Player Mode**: Load video player inline for viewing
+- **Session Management**: Generate secure Kaltura sessions with custom parameters
+- **Real-time Logging**: Comprehensive operation tracking
+
+### Environment Variables Required
+
+```bash
+# Template Configuration
+TEMPLATE_ROOM_ENTRY_ID=your_template_room_entry_id
+```
+
+### Workflow
+1. **Create Room with Live Entry**: Generates both room and live stream entry
+2. **Session Generation**: Create secure sessions for Studio or Player modes
+3. **Studio Mode**: Opens interactive room in new window
+4. **Player Mode**: Loads video player inline for viewing
+
+### API Endpoints
+- `POST /api/kaltura/create-room-with-live`: Combined room and live entry creation
+- `POST /api/kaltura/generate-session`: Session generation for Studio/Player modes
+- `POST /api/kaltura/session-detail`: Fetch entry details
+
+### UI Features
+- **3-Column Layout**: Creation forms, video player, session controls
+- **Mode Toggle**: Switch between Studio and Player modes
+- **Real-time Logs**: Operation tracking with JSON display
+- **Credential Management**: localStorage integration
+
+---
+
+## 📺 Use Case 2: Webcast Events (`/entry-webcast`)
+
+### Purpose
+Create traditional live streaming events without interactive room features.
+
+### Key Features
+- **Live Event Creation**: Creates only live stream entries (no rooms)
+- **Player Integration**: Load video player inline for viewing
+- **Session Management**: Generate secure sessions for video playback
+- **Simplified Workflow**: Focused on one-way live streaming
+- **No Environment Variables**: Works entirely with localStorage credentials
+
+### Environment Variables Required
+
+**None required** - This use case works entirely with credentials stored in localStorage from the PID creation process.
+
+### Workflow
+1. **Create Live Event**: Generates only a live stream entry
+2. **Session Generation**: Create secure sessions for video playback
+3. **Player Loading**: Loads video player inline for viewing
+
+### API Endpoints
+- `POST /api/kaltura/add-live`: Live event creation only
+- `POST /api/kaltura/generate-session`: Session generation for video playback
+- `POST /api/kaltura/session-detail`: Fetch entry details
+
+### UI Features
+- **3-Column Layout**: Creation forms, video player, session controls
+- **Player Mode Only**: Focused on video playback
+- **Real-time Logs**: Operation tracking with JSON display
+- **Credential Management**: localStorage integration
+
+---
+
+## 🎮 Use Case 3: Interactive Rooms (`/entry-interactive`)
+
+### Purpose
+Create pure interactive rooms for collaborative sessions without live streaming.
+
+### Key Features
+- **Room-Only Creation**: Creates only interactive rooms (no live entries)
+- **Inline Room Loading**: Load interactive room directly in the page
+- **Session Management**: Generate secure sessions for room access
+- **Moderator Controls**: Chat and room moderation settings
+- **localStorage Credentials**: Uses credentials from PID creation process
+
+### Environment Variables Required
+
+```bash
+# Template Configuration
+TEMPLATE_ROOM_ENTRY_ID=your_template_room_entry_id
+```
+
+### Workflow
+1. **Create Room**: Generates only an interactive room
+2. **Session Generation**: Create secure sessions for room access
+3. **Inline Loading**: Loads interactive room directly in the page
+
+### API Endpoints
+- `POST /api/kaltura/add-room`: Room creation only
+- `POST /api/kaltura/generate-session`: Session generation for room access
+- `POST /api/kaltura/session-detail`: Fetch room details
+
+### UI Features
+- **3-Column Layout**: Creation forms, room player, session controls
+- **Inline Room Loading**: Interactive room loads directly in the page
+- **Moderator Fields**: Chat and room moderation controls
+- **Real-time Logs**: Operation tracking with JSON display
+- **Credential Management**: localStorage integration
+
+---
+
+## 🏢 Use Case 4: Sub-Tenant Creation (`/create-sub-tenant`)
 
 ### Purpose
 Automated creation of new Kaltura partners with pre-configured KAF modules and publishing categories.
@@ -118,116 +228,6 @@ CUSTOMER_NAME=YourCompanyName
 - `POST /api/kaltura/create-sub-tenant`: Complete PID creation workflow
 - `POST /api/kaltura/create-publishing-category`: Category management
 - `GET /api/kaltura/progress-stream`: Real-time progress updates
-
----
-
-## 🎥 Use Case 2: DIY Live Sessions (`/entry-diy`)
-
-### Purpose
-Create interactive DIY (Do-It-Yourself) live sessions that combine room creation with live entry generation.
-
-### Key Features
-- **Combined Creation**: Creates both a room AND a live entry in one operation
-- **Studio Mode**: Open Kaltura room in new window for interactive sessions
-- **Player Mode**: Load video player inline for viewing
-- **Session Management**: Generate secure Kaltura sessions with custom parameters
-- **Real-time Logging**: Comprehensive operation tracking
-
-### Environment Variables Required
-
-```bash
-# Template Configuration
-TEMPLATE_ROOM_ENTRY_ID=your_template_room_entry_id
-```
-
-### Workflow
-1. **Create Room with Live Entry**: Generates both room and live stream entry
-2. **Session Generation**: Create secure sessions for Studio or Player modes
-3. **Studio Mode**: Opens interactive room in new window
-4. **Player Mode**: Loads video player inline for viewing
-
-### API Endpoints
-- `POST /api/kaltura/create-room-with-live`: Combined room and live entry creation
-- `POST /api/kaltura/generate-session`: Session generation for Studio/Player modes
-- `POST /api/kaltura/session-detail`: Fetch entry details
-
-### UI Features
-- **3-Column Layout**: Creation forms, video player, session controls
-- **Mode Toggle**: Switch between Studio and Player modes
-- **Real-time Logs**: Operation tracking with JSON display
-- **Credential Management**: localStorage integration
-
----
-
-## 📺 Use Case 3: Webcast Events (`/entry-webcast`)
-
-### Purpose
-Create traditional live streaming events without interactive room features.
-
-### Key Features
-- **Live Event Creation**: Creates only live stream entries (no rooms)
-- **Player Integration**: Load video player inline for viewing
-- **Session Management**: Generate secure sessions for video playback
-- **Simplified Workflow**: Focused on one-way live streaming
-- **No Environment Variables**: Works entirely with localStorage credentials
-
-### Environment Variables Required
-
-**None required** - This use case works entirely with credentials stored in localStorage from the PID creation process.
-
-### Workflow
-1. **Create Live Event**: Generates only a live stream entry
-2. **Session Generation**: Create secure sessions for video playback
-3. **Player Loading**: Loads video player inline for viewing
-
-### API Endpoints
-- `POST /api/kaltura/add-live`: Live event creation only
-- `POST /api/kaltura/generate-session`: Session generation for video playback
-- `POST /api/kaltura/session-detail`: Fetch entry details
-
-### UI Features
-- **3-Column Layout**: Creation forms, video player, session controls
-- **Player Mode Only**: Focused on video playback
-- **Real-time Logs**: Operation tracking with JSON display
-- **Credential Management**: localStorage integration
-
----
-
-## 🎮 Use Case 4: Interactive Rooms (`/entry-interactive`)
-
-### Purpose
-Create pure interactive rooms for collaborative sessions without live streaming.
-
-### Key Features
-- **Room-Only Creation**: Creates only interactive rooms (no live entries)
-- **Inline Room Loading**: Load interactive room directly in the page
-- **Session Management**: Generate secure sessions for room access
-- **Moderator Controls**: Chat and room moderation settings
-- **localStorage Credentials**: Uses credentials from PID creation process
-
-### Environment Variables Required
-
-```bash
-# Template Configuration
-TEMPLATE_ROOM_ENTRY_ID=your_template_room_entry_id
-```
-
-### Workflow
-1. **Create Room**: Generates only an interactive room
-2. **Session Generation**: Create secure sessions for room access
-3. **Inline Loading**: Loads interactive room directly in the page
-
-### API Endpoints
-- `POST /api/kaltura/add-room`: Room creation only
-- `POST /api/kaltura/generate-session`: Session generation for room access
-- `POST /api/kaltura/session-detail`: Fetch room details
-
-### UI Features
-- **3-Column Layout**: Creation forms, room player, session controls
-- **Inline Room Loading**: Interactive room loads directly in the page
-- **Moderator Fields**: Chat and room moderation controls
-- **Real-time Logs**: Operation tracking with JSON display
-- **Credential Management**: localStorage integration
 
 ---
 
