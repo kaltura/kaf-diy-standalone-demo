@@ -350,8 +350,7 @@ function initializeLocalStorageDisplay() {
     const localStorageFields = {
         'localTenantId': 'tenantId',
         'localTenantEmail': 'tenantEmail', 
-        'localAdminSecret': 'adminSecret',
-        'localPublishingCategoryId': 'publishingCategoryId'
+        'localAdminSecret': 'adminSecret'
     };
 
     // Populate fields with current localStorage values
@@ -398,8 +397,7 @@ function updateLocalStorageFromForm() {
     const localStorageFields = {
         'localTenantId': 'tenantId',
         'localTenantEmail': 'tenantEmail',
-        'localAdminSecret': 'adminSecret', 
-        'localPublishingCategoryId': 'publishingCategoryId'
+        'localAdminSecret': 'adminSecret'
     };
 
     Object.entries(localStorageFields).forEach(([elementId, storageKey]) => {
@@ -421,7 +419,7 @@ function updateLocalStorageFromForm() {
  * Clear all localStorage values
  */
 function clearAllLocalStorage() {
-    const keysToRemove = ['tenantId', 'tenantEmail', 'adminSecret', 'publishingCategoryId'];
+    const keysToRemove = ['tenantId', 'tenantEmail', 'adminSecret'];
     
     keysToRemove.forEach(key => {
         localStorage.removeItem(key);
@@ -447,8 +445,7 @@ function updateLocalStorageDisplay(key, value) {
     const storageToElementMap = {
         'tenantId': 'localTenantId',
         'tenantEmail': 'localTenantEmail',
-        'adminSecret': 'localAdminSecret',
-        'publishingCategoryId': 'localPublishingCategoryId'
+        'adminSecret': 'localAdminSecret'
     };
 
     const elementId = storageToElementMap[key];
