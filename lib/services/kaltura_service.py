@@ -154,17 +154,19 @@ class KalturaService:
             room_name = data.get('roomName')
             room_desc = data.get('roomDesc')
             live_entry_id_input = data.get('liveEntryIdInput', '')
-            template_room_entry_id = data.get('templateRoomEntryId', '')
 
             if not room_name or not room_desc:
                 return jsonify({
                     'success': False,
                     'message': 'Missing required parameters: roomName and roomDesc'
                 }), 400
-            if not template_room_entry_id or not template_room_entry_id.strip():
+
+            # Get template room entry ID from environment variable
+            template_room_entry_id = os.getenv('TEMPLATE_ROOM_ENTRY_ID')
+            if not template_room_entry_id:
                 return jsonify({
                     'success': False,
-                    'message': 'Template Room Entry ID is required for room creation'
+                    'message': 'Template Room Entry ID not configured. Please set TEMPLATE_ROOM_ENTRY_ID environment variable.'
                 }), 400
 
             # Use Service Layer to create room

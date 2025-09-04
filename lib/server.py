@@ -39,9 +39,9 @@ def create_app():
     def index():
         return send_from_directory(app.static_folder, 'index.html')
     
-    @app.route('/entry-create-kaf')
+    @app.route('/entry-diy')
     def entry_create_kaf():
-        return send_from_directory(app.static_folder, 'pages/entry-create-kaf/index.html')
+        return send_from_directory(app.static_folder, 'pages/entry-diy/index.html')
     
     @app.route('/create-sub-tenant')
     def create_sub_tenant():
@@ -64,7 +64,7 @@ def main():
         print(f"🚀 Starting KAF Standalone Demo Server")
         print(f"🌐 HTTP Server running on http://{host}:{port}")
         print(f"📱 Main Application: http://localhost:{port}/")
-        print(f"📱 Entry Create KAF: http://localhost:{port}/entry-create-kaf")
+        print(f"📱 Entry Create DIY: http://localhost:{port}/entry-diy")
         print(f"📱 Create Sub Tenant: http://localhost:{port}/create-sub-tenant")
         print(f"🔧 Debug Mode: {debug}")
         print(f"📝 KalturaClient logging: ENABLED - All API requests/responses will be logged")

@@ -1,0 +1,112 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Kaltura API Client Library Documentation - KAF Standalone Demo</title>
+    <link rel="stylesheet" type="text/css" href="https://unpkg.com/swagger-ui-dist@5.9.0/swagger-ui.css" />
+    <style>
+        html {
+            box-sizing: border-box;
+            overflow: -moz-scrollbars-vertical;
+            overflow-y: scroll;
+        }
+        *, *:before, *:after {
+            box-sizing: inherit;
+        }
+        body {
+            margin:0;
+            background: #fafafa;
+        }
+        .swagger-ui .topbar {
+            background-color: #1e3a8a;
+        }
+        .swagger-ui .topbar .download-url-wrapper .select-label {
+            color: #ffffff;
+        }
+        .swagger-ui .topbar .download-url-wrapper input[type=text] {
+            border: 2px solid #3b82f6;
+        }
+        .swagger-ui .info .title {
+            color: #1e3a8a;
+        }
+        .swagger-ui .info .description {
+            color: #374151;
+        }
+        .swagger-ui .scheme-container {
+            background-color: #f3f4f6;
+        }
+        .swagger-ui .info .title {
+            font-size: 2.5em;
+            font-weight: 600;
+        }
+        .swagger-ui .info .description {
+            font-size: 1.1em;
+            line-height: 1.6;
+        }
+        .swagger-ui .opblock.opblock-post .opblock-summary-method {
+            background-color: #1e3a8a;
+        }
+        .swagger-ui .opblock.opblock-get .opblock-summary-method {
+            background-color: #059669;
+        }
+    </style>
+</head>
+<body>
+    <div id="swagger-ui"></div>
+    <script src="https://unpkg.com/swagger-ui-dist@5.9.0/swagger-ui-bundle.js"></script>
+    <script src="https://unpkg.com/swagger-ui-dist@5.9.0/swagger-ui-standalone-preset.js"></script>
+    <script>
+        window.onload = function() {
+            const ui = SwaggerUIBundle({
+                url: './swagger.yaml',
+                dom_id: '#swagger-ui',
+                deepLinking: true,
+                presets: [
+                    SwaggerUIBundle.presets.apis,
+                    SwaggerUIStandalonePreset
+                ],
+                plugins: [
+                    SwaggerUIBundle.plugins.DownloadUrl
+                ],
+                layout: "StandaloneLayout",
+                validatorUrl: null,
+                docExpansion: "list",
+                filter: true,
+                showExtensions: true,
+                showCommonExtensions: true,
+                tryItOutEnabled: true,
+                defaultModelsExpandDepth: 2,
+                defaultModelExpandDepth: 2,
+                requestInterceptor: function(request) {
+                    // Add default parameters for Kaltura API
+                    if (request.url.includes('/api_v3/')) {
+                        if (!request.url.includes('partnerId=')) {
+                            request.url += (request.url.includes('?') ? '&' : '?') + 'partnerId=YOUR_PARTNER_ID';
+                        }
+                        if (!request.url.includes('ks=')) {
+                            request.url += '&ks=YOUR_KALTURA_SESSION';
+                        }
+                        if (!request.url.includes('format=')) {
+                            request.url += '&format=1';
+                        }
+                    }
+                    // Handle KAF embedded rooms endpoint
+                    if (request.url.includes('/embeddedrooms/')) {
+                        if (!request.url.includes('partnerId=')) {
+                            request.url += (request.url.includes('?') ? '&' : '?') + 'partnerId=YOUR_PARTNER_ID';
+                        }
+                        if (!request.url.includes('ks=')) {
+                            request.url += '&ks=YOUR_KALTURA_SESSION';
+                        }
+                    }
+                    return request;
+                },
+                responseInterceptor: function(response) {
+                    return response;
+                }
+            });
+        };
+    </script>
+</body>
+</html>

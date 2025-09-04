@@ -1,0 +1,152 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Kaltura Interactive Room Creator</title>
+    <link rel="stylesheet" type="text/css" href="app.css?v=1236" media="screen" />
+    <link rel="stylesheet" type="text/css" href="../../app.css" media="screen" />
+    <script type="module" src="app.js"></script>
+    <script src="../../app.js"></script>
+</head>
+<body>
+    <div class="container">
+        <!-- Left Column -->
+        <div class="left-column">
+            <!-- Room Creation Form -->
+            <div class="section">
+                <form id="roomForm">
+                    <input type="text" id="roomName" name="roomName" placeholder="Room Name" required>
+                    <textarea id="roomDescription" placeholder="Room Description" required></textarea>
+                    <button type="submit" id="createButton">Create Interactive Room</button>
+                </form>
+            </div>
+
+            <!-- Get Room Details -->
+            <div class="section">
+                <form id="getRoomForm">
+                    <input type="text" id="roomIdInput" name="roomId" placeholder="Room ID" required>
+                    <button type="submit">Get Room Details</button>
+                </form>
+            </div>
+
+            <!-- Logs Section -->
+            <div class="section">
+                <div class="section-header">
+                    <h3>Logs</h3>
+                    <button id="clearLogsBtn" type="button">Clear</button>
+                </div>
+                <pre id="logOutput"></pre>
+            </div>
+        </div>
+
+        <!-- Middle Column for Room Player -->
+        <div class="middle-column">
+            <div class="section">
+                <h3>Interactive Room</h3>
+                <div class="room-container">
+                    <iframe id="roomPlayerIframe" 
+                            src="about:blank" 
+                            frameborder="0" 
+                            allowfullscreen
+                            title="Interactive Room"
+                            style="min-width: 1000px; width: 100%; height: 100%;">
+                    </iframe>
+                </div>
+            </div>
+        </div>
+
+        <!-- Right Column -->
+        <div class="right-column">
+            <!-- Room Session Form -->
+            <div class="section compact-form">
+                <form id="roomSessionForm">
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label for="role">Role</label>
+                            <select id="role" name="role">
+                                <option value="viewerRole">Viewer Role</option>
+                                <option value="privateOnlyRole">Private Only Role</option>
+                                <option value="adminRole">Admin Role</option>
+                                <option value="unmoderatedAdminRole">Unmoderated Admin Role</option>
+                            </select>
+                        </div>
+                    </div>
+
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label for="userId">User ID *</label>
+                            <input type="text" id="userId" name="userId" required>
+                        </div>
+                        <div class="form-group">
+                            <label for="roomId">Room ID *</label>
+                            <input type="text" id="roomId" name="roomId" required>
+                        </div>
+                    </div>
+
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label for="firstName">First Name</label>
+                            <input type="text" id="firstName" name="firstName">
+                        </div>
+                        <div class="form-group">
+                            <label for="lastName">Last Name</label>
+                            <input type="text" id="lastName" name="lastName">
+                        </div>
+                    </div>
+
+                    <div class="form-row" id="moderatorFields">
+                        <div class="form-group">
+                            <label for="chatModerator">Chat Moderator</label>
+                            <input type="text" id="chatModerator" name="chatModerator" placeholder="1/0">
+                        </div>
+                        <div class="form-group">
+                            <label for="roomModerator">Room Moderator</label>
+                            <input type="text" id="roomModerator" name="roomModerator" placeholder="1/0">
+                        </div>
+                    </div>
+
+                    <button type="button" id="loadRoomBtn">Load Room</button>
+                </form>
+            </div>
+
+            <!-- LocalStorage Display Section -->
+            <div class="section compact-form">
+                <h3>DONT USE IN UI- Only for demo</h3>
+                <form id="localStorageForm">
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label for="localTenantId">PID</label>
+                            <input type="text" id="localTenantId" name="localTenantId" style="font-size: 11px;">
+                        </div>
+                        <div class="form-group">
+                            <label for="localTenantEmail">PID Email</label>
+                            <input type="text" id="localTenantEmail" name="localTenantEmail" style="font-size: 11px;">
+                        </div>
+                    </div>
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label for="localAdminSecret">PID Secret</label>
+                            <input type="text" id="localAdminSecret" name="localAdminSecret" style="font-size: 11px;">
+                        </div>
+                    </div>
+                    <div class="form-row">
+                        <button type="button" id="updateLocalStorage" style="font-size: 11px;">Update Storage</button>
+                        <button type="button" id="clearLocalStorage" style="font-size: 11px;">Clear All</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <!-- Modal -->
+    <div id="modalDialog" class="modal">
+        <div class="modal-content">
+            <h2 id="model-header">Rooms for Selected Event</h2>
+            <ul id="roomList"></ul>
+            <button id="closeModal">Close</button>
+        </div>
+    </div>
+
+</body>
+</html>
