@@ -94,9 +94,13 @@ def get_env_info():
 @api_bp.route('/api-docs')
 def api_docs():
     """Serve the Kaltura API Client Library documentation"""
-    return send_from_directory('.', 'kaltura-api-ui.html')
+    import os
+    project_root = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
+    return send_from_directory(project_root, 'kaltura-api-ui.html')
 
 @api_bp.route('/swagger.yaml')
 def swagger_spec():
     """Serve the Kaltura API Client specification file"""
-    return send_from_directory('.', 'kaltura-api-swagger.yaml') 
+    import os
+    project_root = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
+    return send_from_directory(project_root, 'kaltura-api-swagger.yaml') 
