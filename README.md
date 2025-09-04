@@ -293,6 +293,73 @@ This project is a comprehensive port and enhancement of the original Kaltura KAF
 ---
 
 
+## 📚 API Documentation
+
+### Kaltura API Client Library Documentation
+Comprehensive documentation for the Kaltura Python Client Library (KalturaApiClient==21.19.0) is available:
+
+- **Local Development**: http://localhost:3033/api-docs
+- **Production**: https://your-production-domain.com/api-docs
+
+This documentation covers all the core Kaltura API methods available through the official Python client library, including:
+- Live Stream operations
+- Room management
+- Partner registration
+- Category management
+- Metadata operations
+- KAF embedded rooms API
+
+### Kaltura API Endpoints Overview
+
+The Kaltura API Client Library provides the following endpoint categories:
+
+#### Partner Management
+- `POST /api_v3/service/partner/action/register` - Register new Kaltura partners
+
+#### Live Stream Operations
+- `POST /api_v3/service/livestream/action/add` - Create live stream entries
+- `POST /api_v3/service/livestream/action/get` - Get live stream entry details
+- `POST /api_v3/service/livestream/action/update` - Update live stream entries
+- `POST /api_v3/service/livestream/action/delete` - Delete live stream entries
+- `POST /api_v3/service/livestream/action/list` - List live stream entries
+
+#### Room Operations
+- `POST /api_v3/service/room/action/get` - Get room entry details
+- `POST /embeddedrooms/index/create-room` - Create embedded rooms via KAF
+
+#### Category Management
+- `POST /api_v3/service/category/action/add` - Create categories
+- `POST /api_v3/service/category/action/get` - Get category details
+- `POST /api_v3/service/category/action/list` - List categories
+- `POST /api_v3/service/categoryentry/action/add` - Add entries to categories
+
+#### Metadata Operations
+- `POST /api_v3/service/metadata/action/add` - Add metadata to entries
+- `POST /api_v3/service/metadata/action/get` - Get metadata details
+- `POST /api_v3/service/metadata/action/update` - Update metadata
+
+### Using the Swagger UI
+1. Start your Flask application: `python run.py`
+2. Navigate to http://localhost:3033/api-docs
+3. Explore the Kaltura API endpoints by category
+4. Use the "Try it out" feature to test Kaltura API calls with your credentials
+5. View request/response schemas and examples
+
+### Kaltura API Authentication
+All Kaltura API endpoints require authentication using:
+- **Partner ID**: Your Kaltura partner ID
+- **KS Token**: Kaltura session token (generated from admin secret or user session)
+- **Service URL**: Your Kaltura instance URL
+
+**Example authentication parameters:**
+```
+partnerId: 123456
+ks: KS1234567890abcdef
+format: 1 (for JSON responses)
+```
+
+---
+
 ## 🆘 Support
 
 For technical issues:

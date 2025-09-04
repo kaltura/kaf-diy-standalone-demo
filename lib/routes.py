@@ -1,4 +1,4 @@
-from flask import Blueprint, request, jsonify, Response
+from flask import Blueprint, request, jsonify, Response, send_from_directory
 from .services.kaltura_service import KalturaService
 import json
 import queue
@@ -89,4 +89,14 @@ def get_env_info():
         'kaltura_parent_partner_id': os.getenv('KALTURA_PARENT_PARTNER_ID', 'Not set'),
         'kaltura_template_partner_id': os.getenv('KALTURA_TEMPLATE_PARTNER_ID', 'Not set'),
     }
-    return jsonify(env_info) 
+    return jsonify(env_info)
+
+@api_bp.route('/api-docs')
+def api_docs():
+    """Serve the Kaltura API Client Library documentation"""
+    return send_from_directory('.', 'kaltura-api-ui.html')
+
+@api_bp.route('/swagger.yaml')
+def swagger_spec():
+    """Serve the Kaltura API Client specification file"""
+    return send_from_directory('.', 'kaltura-api-swagger.yaml') 

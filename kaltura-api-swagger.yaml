@@ -1,0 +1,936 @@
+openapi: 3.0.3
+info:
+  title: Kaltura API Client Library
+  description: |
+    Comprehensive API documentation for the Kaltura Python Client Library (KalturaApiClient==21.19.0).
+    
+    This documentation covers the core Kaltura API methods available through the official Python client library.
+    
+    ## Authentication
+    All API calls require Kaltura session authentication using either:
+    - Admin KS (Admin Secret)
+    - User KS (User Session)
+    
+    ## Base URL
+    - Production: https://www.kaltura.com
+    - Custom: Your Kaltura instance URL
+    
+    ## Common Parameters
+    - `partnerId`: Your Kaltura partner ID
+    - `ks`: Kaltura Session token
+    - `format`: Response format (1=JSON, 2=XML)
+  version: 21.19.0
+  contact:
+    name: Kaltura API Support
+    url: https://www.kaltura.com
+  license:
+    name: Kaltura License
+    url: https://www.kaltura.com/terms-of-use
+
+servers:
+  - url: https://www.kaltura.com
+    description: Production Kaltura server
+  - url: https://{partnerId}.kaltura.com
+    description: Custom Kaltura instance
+  - url: https://{partnerId}.kaf.kaltura.com
+    description: KAF (Kaltura Application Framework) instance
+
+tags:
+  - name: Core
+    description: Core Kaltura API operations
+  - name: Live Stream
+    description: Live streaming operations
+  - name: Room
+    description: Interactive room operations
+  - name: Partner
+    description: Partner management operations
+  - name: Category
+    description: Category management operations
+  - name: Metadata
+    description: Metadata operations
+  - name: Session
+    description: Session management operations
+
+paths:
+  /api_v3/service/partner/action/register:
+    post:
+      tags:
+        - Partner
+      summary: Register Partner
+      description: Create a new Kaltura partner account
+      operationId: registerPartner
+      requestBody:
+        required: true
+        content:
+          application/x-www-form-urlencoded:
+            schema:
+              type: object
+              required:
+                - partner
+                - cmsPassword
+                - templatePartnerId
+              properties:
+                partner:
+                  $ref: '#/components/schemas/KalturaPartner'
+                cmsPassword:
+                  type: string
+                  description: CMS password for the new partner
+                templatePartnerId:
+                  type: integer
+                  description: Template partner ID to use
+                silent:
+                  type: boolean
+                  description: Whether to perform silent registration
+                  default: false
+      responses:
+        '200':
+          description: Partner registered successfully
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/KalturaPartner'
+
+  /api_v3/service/livestream/action/add:
+    post:
+      tags:
+        - Live Stream
+      summary: Add Live Stream Entry
+      description: Create a new live stream entry
+      operationId: addLiveStream
+      requestBody:
+        required: true
+        content:
+          application/x-www-form-urlencoded:
+            schema:
+              type: object
+              required:
+                - liveStreamEntry
+                - sourceType
+              properties:
+                liveStreamEntry:
+                  $ref: '#/components/schemas/KalturaLiveStreamEntry'
+                sourceType:
+                  $ref: '#/components/schemas/KalturaSourceType'
+      responses:
+        '200':
+          description: Live stream entry created successfully
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/KalturaLiveStreamEntry'
+
+  /api_v3/service/livestream/action/get:
+    post:
+      tags:
+        - Live Stream
+      summary: Get Live Stream Entry
+      description: Retrieve a live stream entry by ID
+      operationId: getLiveStream
+      requestBody:
+        required: true
+        content:
+          application/x-www-form-urlencoded:
+            schema:
+              type: object
+              required:
+                - entryId
+              properties:
+                entryId:
+                  type: string
+                  description: Live stream entry ID
+      responses:
+        '200':
+          description: Live stream entry retrieved successfully
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/KalturaLiveStreamEntry'
+
+  /api_v3/service/livestream/action/update:
+    post:
+      tags:
+        - Live Stream
+      summary: Update Live Stream Entry
+      description: Update an existing live stream entry
+      operationId: updateLiveStream
+      requestBody:
+        required: true
+        content:
+          application/x-www-form-urlencoded:
+            schema:
+              type: object
+              required:
+                - entryId
+                - liveStreamEntry
+              properties:
+                entryId:
+                  type: string
+                  description: Live stream entry ID
+                liveStreamEntry:
+                  $ref: '#/components/schemas/KalturaLiveStreamEntry'
+      responses:
+        '200':
+          description: Live stream entry updated successfully
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/KalturaLiveStreamEntry'
+
+  /api_v3/service/livestream/action/delete:
+    post:
+      tags:
+        - Live Stream
+      summary: Delete Live Stream Entry
+      description: Delete a live stream entry
+      operationId: deleteLiveStream
+      requestBody:
+        required: true
+        content:
+          application/x-www-form-urlencoded:
+            schema:
+              type: object
+              required:
+                - entryId
+              properties:
+                entryId:
+                  type: string
+                  description: Live stream entry ID
+      responses:
+        '200':
+          description: Live stream entry deleted successfully
+
+  /api_v3/service/livestream/action/list:
+    post:
+      tags:
+        - Live Stream
+      summary: List Live Stream Entries
+      description: Retrieve a list of live stream entries
+      operationId: listLiveStreams
+      requestBody:
+        required: false
+        content:
+          application/x-www-form-urlencoded:
+            schema:
+              type: object
+              properties:
+                filter:
+                  $ref: '#/components/schemas/KalturaLiveStreamEntryFilter'
+                pager:
+                  $ref: '#/components/schemas/KalturaFilterPager'
+      responses:
+        '200':
+          description: Live stream entries retrieved successfully
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/KalturaLiveStreamEntryListResponse'
+
+
+
+  /api_v3/service/room/action/get:
+    post:
+      tags:
+        - Room
+      summary: Get Room Entry
+      description: Retrieve a room entry by ID
+      operationId: getRoom
+      requestBody:
+        required: true
+        content:
+          application/x-www-form-urlencoded:
+            schema:
+              type: object
+              required:
+                - entryId
+              properties:
+                entryId:
+                  type: string
+                  description: Room entry ID
+      responses:
+        '200':
+          description: Room entry retrieved successfully
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/KalturaRoomEntry'
+
+  /api_v3/service/category/action/add:
+    post:
+      tags:
+        - Category
+      summary: Add Category
+      description: Create a new category
+      operationId: addCategory
+      requestBody:
+        required: true
+        content:
+          application/x-www-form-urlencoded:
+            schema:
+              type: object
+              required:
+                - category
+              properties:
+                category:
+                  $ref: '#/components/schemas/KalturaCategory'
+      responses:
+        '200':
+          description: Category created successfully
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/KalturaCategory'
+
+  /api_v3/service/category/action/get:
+    post:
+      tags:
+        - Category
+      summary: Get Category
+      description: Retrieve a category by ID
+      operationId: getCategory
+      requestBody:
+        required: true
+        content:
+          application/x-www-form-urlencoded:
+            schema:
+              type: object
+              required:
+                - id
+              properties:
+                id:
+                  type: integer
+                  description: Category ID
+      responses:
+        '200':
+          description: Category retrieved successfully
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/KalturaCategory'
+
+  /api_v3/service/category/action/list:
+    post:
+      tags:
+        - Category
+      summary: List Categories
+      description: Retrieve a list of categories
+      operationId: listCategories
+      requestBody:
+        required: false
+        content:
+          application/x-www-form-urlencoded:
+            schema:
+              type: object
+              properties:
+                filter:
+                  $ref: '#/components/schemas/KalturaCategoryFilter'
+                pager:
+                  $ref: '#/components/schemas/KalturaFilterPager'
+      responses:
+        '200':
+          description: Categories retrieved successfully
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/KalturaCategoryListResponse'
+
+  /api_v3/service/categoryentry/action/add:
+    post:
+      tags:
+        - Category
+      summary: Add Category Entry
+      description: Add an entry to a category
+      operationId: addCategoryEntry
+      requestBody:
+        required: true
+        content:
+          application/x-www-form-urlencoded:
+            schema:
+              type: object
+              required:
+                - categoryEntry
+              properties:
+                categoryEntry:
+                  $ref: '#/components/schemas/KalturaCategoryEntry'
+      responses:
+        '200':
+          description: Entry added to category successfully
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/KalturaCategoryEntry'
+
+  /api_v3/service/metadata/action/add:
+    post:
+      tags:
+        - Metadata
+      summary: Add Metadata
+      description: Add metadata to an entry
+      operationId: addMetadata
+      requestBody:
+        required: true
+        content:
+          application/x-www-form-urlencoded:
+            schema:
+              type: object
+              required:
+                - metadataProfileId
+                - objectType
+                - objectId
+                - xmlData
+              properties:
+                metadataProfileId:
+                  type: integer
+                  description: Metadata profile ID
+                objectType:
+                  $ref: '#/components/schemas/KalturaMetadataObjectType'
+                objectId:
+                  type: string
+                  description: Object ID (usually entry ID)
+                xmlData:
+                  type: string
+                  description: XML metadata content
+      responses:
+        '200':
+          description: Metadata added successfully
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/KalturaMetadata'
+
+  /api_v3/service/metadata/action/get:
+    post:
+      tags:
+        - Metadata
+      summary: Get Metadata
+      description: Retrieve metadata by ID
+      operationId: getMetadata
+      requestBody:
+        required: true
+        content:
+          application/x-www-form-urlencoded:
+            schema:
+              type: object
+              required:
+                - id
+              properties:
+                id:
+                  type: integer
+                  description: Metadata ID
+      responses:
+        '200':
+          description: Metadata retrieved successfully
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/KalturaMetadata'
+
+  /api_v3/service/metadata/action/update:
+    post:
+      tags:
+        - Metadata
+      summary: Update Metadata
+      description: Update existing metadata
+      operationId: updateMetadata
+      requestBody:
+        required: true
+        content:
+          application/x-www-form-urlencoded:
+            schema:
+              type: object
+              required:
+                - id
+                - xmlData
+              properties:
+                id:
+                  type: integer
+                  description: Metadata ID
+                xmlData:
+                  type: string
+                  description: Updated XML metadata content
+      responses:
+        '200':
+          description: Metadata updated successfully
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/KalturaMetadata'
+
+  /embeddedrooms/index/create-room:
+    post:
+      tags:
+        - Room
+      summary: Create Embedded Room (KAF)
+      description: |
+        Create an embedded room using the KAF (Kaltura Application Framework) API.
+        
+        This endpoint creates an interactive room that can be embedded in web applications.
+        The room is created on the KAF instance associated with the partner ID.
+        
+        **Note**: This endpoint requires a valid Kaltura session token (KS) and is called
+        directly on the KAF instance URL: `https://{partnerId}.kaf.kaltura.com`
+      operationId: createEmbeddedRoom
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/KalturaEmbeddedRoomRequest'
+      responses:
+        '200':
+          description: Room created successfully
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/KalturaEmbeddedRoomResponse'
+        '400':
+          description: Bad request - missing required parameters
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  success:
+                    type: boolean
+                    example: false
+                  message:
+                    type: string
+                    example: "Missing required parameters: ks, name, description, templateRoomEntryId"
+        '401':
+          description: Unauthorized - invalid session token
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  success:
+                    type: boolean
+                    example: false
+                  message:
+                    type: string
+                    example: "Invalid session token"
+        '500':
+          description: Internal server error
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  success:
+                    type: boolean
+                    example: false
+                  message:
+                    type: string
+                    example: "Failed to create room"
+
+components:
+  schemas:
+    KalturaPartner:
+      type: object
+      properties:
+        id:
+          type: integer
+          description: Partner ID
+        name:
+          type: string
+          description: Partner name
+        adminEmail:
+          type: string
+          format: email
+          description: Admin email
+        description:
+          type: string
+          description: Partner description
+        partnerPackage:
+          type: integer
+          description: Partner package
+        referenceId:
+          type: string
+          description: Reference ID
+        adminSecret:
+          type: string
+          description: Admin secret
+        adminUserId:
+          type: string
+          description: Admin user ID
+
+    KalturaLiveStreamEntry:
+      type: object
+      properties:
+        id:
+          type: string
+          description: Entry ID
+        name:
+          type: string
+          description: Entry name
+        description:
+          type: string
+          description: Entry description
+        adminTags:
+          type: string
+          description: Admin tags
+        dvrStatus:
+          $ref: '#/components/schemas/KalturaDVRStatus'
+        dvrWindow:
+          type: integer
+          description: DVR window in minutes
+        mediaType:
+          $ref: '#/components/schemas/KalturaMediaType'
+        recordStatus:
+          type: integer
+          description: Recording status
+        explicitLive:
+          $ref: '#/components/schemas/KalturaNullableBoolean'
+        entitledUsersEdit:
+          type: string
+          description: Entitled users for editing
+        recordingOptions:
+          $ref: '#/components/schemas/KalturaLiveEntryRecordingOptions'
+
+    KalturaLiveStreamEntryFilter:
+      type: object
+      properties:
+        idEqual:
+          type: string
+          description: Filter by entry ID
+        nameLike:
+          type: string
+          description: Filter by name (partial match)
+        statusEqual:
+          $ref: '#/components/schemas/KalturaEntryStatus'
+        mediaTypeEqual:
+          $ref: '#/components/schemas/KalturaMediaType'
+
+    KalturaLiveStreamEntryListResponse:
+      type: object
+      properties:
+        totalCount:
+          type: integer
+          description: Total number of entries
+        objects:
+          type: array
+          items:
+            $ref: '#/components/schemas/KalturaLiveStreamEntry'
+
+    KalturaRoomEntry:
+      type: object
+      properties:
+        id:
+          type: string
+          description: Room entry ID
+        name:
+          type: string
+          description: Room name
+        description:
+          type: string
+          description: Room description
+        tags:
+          type: string
+          description: Room tags
+        roomType:
+          type: string
+          description: Room type
+        broadcastEntryId:
+          type: string
+          description: Associated broadcast entry ID
+
+    KalturaCategory:
+      type: object
+      properties:
+        id:
+          type: integer
+          description: Category ID
+        name:
+          type: string
+          description: Category name
+        description:
+          type: string
+          description: Category description
+        parentId:
+          type: integer
+          description: Parent category ID
+        fullName:
+          type: string
+          description: Full category path
+        membersCount:
+          type: integer
+          description: Number of members
+        entriesCount:
+          type: integer
+          description: Number of entries
+
+    KalturaCategoryFilter:
+      type: object
+      properties:
+        idEqual:
+          type: integer
+          description: Filter by category ID
+        idIn:
+          type: string
+          description: Filter by multiple category IDs
+        nameLike:
+          type: string
+          description: Filter by name (partial match)
+        parentIdEqual:
+          type: integer
+          description: Filter by parent category ID
+        fullNameLike:
+          type: string
+          description: Filter by full name (partial match)
+
+    KalturaCategoryListResponse:
+      type: object
+      properties:
+        totalCount:
+          type: integer
+          description: Total number of categories
+        objects:
+          type: array
+          items:
+            $ref: '#/components/schemas/KalturaCategory'
+
+    KalturaCategoryEntry:
+      type: object
+      properties:
+        categoryId:
+          type: integer
+          description: Category ID
+        entryId:
+          type: string
+          description: Entry ID
+        categoryFullIds:
+          type: string
+          description: Full category path
+        status:
+          type: integer
+          description: Status
+
+    KalturaMetadata:
+      type: object
+      properties:
+        id:
+          type: integer
+          description: Metadata ID
+        metadataProfileId:
+          type: integer
+          description: Metadata profile ID
+        objectType:
+          $ref: '#/components/schemas/KalturaMetadataObjectType'
+        objectId:
+          type: string
+          description: Object ID
+        xmlData:
+          type: string
+          description: XML metadata content
+        version:
+          type: integer
+          description: Metadata version
+
+    KalturaLiveEntryRecordingOptions:
+      type: object
+      properties:
+        shouldCopyEntitlement:
+          $ref: '#/components/schemas/KalturaNullableBoolean'
+        shouldMakeHidden:
+          $ref: '#/components/schemas/KalturaNullableBoolean'
+        shouldMakePublic:
+          $ref: '#/components/schemas/KalturaNullableBoolean'
+
+    KalturaFilterPager:
+      type: object
+      properties:
+        pageSize:
+          type: integer
+          description: Number of items per page
+          default: 500
+        pageIndex:
+          type: integer
+          description: Page index (1-based)
+          default: 1
+
+    KalturaDVRStatus:
+      type: string
+      enum:
+        - DISABLED
+        - ENABLED
+      description: DVR status
+
+    KalturaMediaType:
+      type: string
+      enum:
+        - VIDEO
+        - IMAGE
+        - AUDIO
+        - LIVE_STREAM_FLASH
+        - LIVE_STREAM_WINDOWS_MEDIA
+        - LIVE_STREAM_REAL_MEDIA
+        - LIVE_STREAM_QUICKTIME
+      description: Media type
+
+    KalturaEntryStatus:
+      type: string
+      enum:
+        - ERROR_IMPORTING
+        - ERROR_CONVERTING
+        - INVALID
+        - INFECTED
+        - ERROR_DOWNLOADING
+        - TEMP
+        - IMPORT
+        - READY
+        - DELETED
+        - PENDING
+        - MODERATE
+        - BLOCKED
+        - NO_CONTENT
+      description: Entry status
+
+    KalturaNullableBoolean:
+      type: string
+      enum:
+        - NULL_VALUE
+        - FALSE_VALUE
+        - TRUE_VALUE
+      description: Nullable boolean value
+
+    KalturaSourceType:
+      type: string
+      enum:
+        - FILE
+        - WEBCAM
+        - URL
+        - SEARCH_PROVIDER
+        - AKAMAI_LIVE
+        - MANUAL_LIVE_STREAM
+        - AKAMAI_UNIVERSAL_LIVE
+        - LIVE_STREAM
+        - LIVE_CHANNEL
+        - RECORDED_LIVE
+        - CLIP
+        - KALTURA_RECORDED_LIVE
+        - LECTURE_CAPTURE
+      description: Source type
+
+    KalturaMetadataObjectType:
+      type: string
+      enum:
+        - ENTRY
+        - CATEGORY
+        - USER
+        - PARTNER
+        - DYNAMIC_OBJECT
+      description: Metadata object type
+
+    KalturaEmbeddedRoomRequest:
+      type: object
+      required:
+        - ks
+        - name
+        - description
+        - templateRoomEntryId
+      properties:
+        ks:
+          type: string
+          description: Kaltura session token
+          example: "KS1234567890abcdef"
+        name:
+          type: string
+          description: Name of the room (will be suffixed with '_studio')
+          example: "Collaboration Room"
+        description:
+          type: string
+          description: Description of the room
+          example: "Interactive collaboration session"
+        tags:
+          type: string
+          description: Comma-separated tags for the room
+          example: "collaboration,meeting"
+        templateRoomEntryId:
+          type: string
+          description: Template room entry ID to use for configuration
+          example: "1_template_room_123"
+        liveEntryIdInput:
+          type: string
+          description: Live entry ID to associate with the room (optional)
+          example: "1_live_entry_456"
+        moderatorId:
+          type: string
+          description: Moderator user ID (optional)
+          example: "moderator123"
+        participantsLimit:
+          type: integer
+          description: Maximum number of participants (optional)
+          example: 50
+        recordingEnabled:
+          type: boolean
+          description: Whether recording is enabled (optional)
+          default: true
+        chatEnabled:
+          type: boolean
+          description: Whether chat is enabled (optional)
+          default: true
+        screenSharingEnabled:
+          type: boolean
+          description: Whether screen sharing is enabled (optional)
+          default: true
+
+    KalturaEmbeddedRoomResponse:
+      type: object
+      properties:
+        success:
+          type: boolean
+          example: true
+        data:
+          type: object
+          properties:
+            id:
+              type: string
+              description: Created room ID
+              example: "room_123456"
+            name:
+              type: string
+              description: Room name
+              example: "Collaboration Room_studio"
+            description:
+              type: string
+              description: Room description
+              example: "Interactive collaboration session"
+            tags:
+              type: string
+              description: Room tags
+              example: "collaboration,meeting"
+            templateRoomEntryId:
+              type: string
+              description: Template room entry ID used
+              example: "1_template_room_123"
+            liveEntryId:
+              type: string
+              description: Associated live entry ID (if provided)
+              example: "1_live_entry_456"
+            createdAt:
+              type: string
+              format: date-time
+              description: Room creation timestamp
+              example: "2024-01-15T10:30:00Z"
+            status:
+              type: string
+              description: Room status
+              example: "ready"
+        message:
+          type: string
+          example: "Room created successfully"
+
+  securitySchemes:
+    KalturaSession:
+      type: apiKey
+      name: ks
+      in: query
+      description: Kaltura Session token
+    KalturaPartner:
+      type: apiKey
+      name: partnerId
+      in: query
+      description: Kaltura Partner ID
+
+security:
+  - KalturaSession: []
+  - KalturaPartner: []
